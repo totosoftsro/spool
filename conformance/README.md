@@ -4,7 +4,11 @@ Every implementation runs exactly the same cases. This directory is the contract
 
 The cases are plain JSON. Running them requires writing a small runner in your
 language — roughly 100 lines — not porting a test framework. Two reference
-runners live in [`runners/`](./runners/) if you want a model.
+runners exist, and they live with the implementations they belong to rather
+than here, so that they run under each ecosystem's own test tooling:
+
+- [`implementations/typescript/test/conformance.test.ts`](../implementations/typescript/test/conformance.test.ts)
+- [`implementations/python/tests/test_conformance.py`](../implementations/python/tests/test_conformance.py)
 
 ```
 conformance/
@@ -19,9 +23,6 @@ conformance/
     redact/            §9    redaction rules and entropy detection
     structural/        §11.3 documents that must be rejected
     version/           §11.2 forward and backward version handling
-  runners/
-    conformance.ts     TypeScript runner
-    conformance.py     Python runner
 ```
 
 ## Running
