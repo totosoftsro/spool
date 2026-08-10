@@ -1,0 +1,10 @@
+{
+  "id": "canonical/exponent-just-above",
+  "kind": "canonical",
+  "level": "core",
+  "description": "1e-6 is still written in full.",
+  "value": {
+    "x": 1e-06
+  },
+  "expected": "{\"x\":0.000001}"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "match/placeholder-typed-ok",
+  "kind": "match",
+  "level": "core",
+  "description": "{{any:number}} matches a JSON number.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": "{{any:number}}"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 42
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

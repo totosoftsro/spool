@@ -1,0 +1,75 @@
+{
+  "hif": "1.0",
+  "meta": {
+    "name": "payments-api",
+    "recorder": { "name": "spool-python", "version": "0.1.0" },
+    "redaction": { "applied": true, "rules": ["headers", "jsonFields"] }
+  },
+  "defaults": {
+    "match": { "body": { "json": { "ignore": ["/idempotencyKey"] } } }
+  },
+  "interactions": [
+    {
+      "id": "create-charge",
+      "request": {
+        "method": "POST",
+        "url": "https://api.payments.example/v1/charges",
+        "headers": [
+          ["authorization", "{{redacted}}"],
+          ["content-type", "application/json"]
+        ],
+        "body": {
+          "encoding": "json",
+          "json": { "amount": 4999, "currency": "GBP", "idempotencyKey": "irrelevant" }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": [["content-type", "application/json"]],
+        "body": {
+          "encoding": "json",
+          "json": { "id": "ch_test_1", "amount": 4999, "currency": "GBP", "status": "succeeded" }
+        }
+      },
+      "expect": { "called": "once" }
+    },
+    {
+      "id": "declined-card",
+      "request": {
+        "method": "POST",
+        "url": "https://api.payments.example/v1/charges",
+        "headers": [["content-type", "application/json"]],
+        "body": {
+          "encoding": "json",
+          "json": { "amount": 100000, "currency": "GBP", "idempotencyKey": "irrelevant" }
+        }
+      },
+      "response": {
+        "status": 402,
+        "headers": [["content-type", "application/json"]],
+        "body": {
+          "encoding": "json",
+          "json": { "error": { "code": "card_declined", "message": "Your card was declined." } }
+        }
+      }
+    },
+    {
+      "id": "network-blip",
+      "request": { "method": "GET", "url": "https://api.payments.example/v1/charges/ch_test_1" },
+      "fault": { "type": "connection-reset" }
+    },
+    {
+      "id": "retrieve-charge",
+      "request": { "method": "GET", "url": "https://api.payments.example/v1/charges/ch_test_1" },
+      "response": {
+        "status": 200,
+        "headers": [["content-type", "application/json"]],
+        "body": {
+          "encoding": "json",
+          "json": { "id": "ch_test_1", "status": "succeeded", "amount": 4999 }
+        }
+      },
+      "replay": { "times": "unlimited" }
+    }
+  ]
+}

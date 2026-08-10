@@ -1,0 +1,18 @@
+{
+  "id": "match/placeholder-in-query",
+  "kind": "match",
+  "level": "core",
+  "description": "A placeholder works in a recorded query value.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?nonce=%7B%7Bany%7D%7D"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?nonce=abc123"
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

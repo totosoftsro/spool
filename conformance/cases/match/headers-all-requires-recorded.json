@@ -1,0 +1,43 @@
+{
+  "id": "match/headers-all-requires-recorded",
+  "kind": "match",
+  "level": "core",
+  "description": "All mode requires the recorded fields.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "config": {
+    "headers": {
+      "mode": "all"
+    }
+  },
+  "expected": {
+    "matches": false
+  }
+}

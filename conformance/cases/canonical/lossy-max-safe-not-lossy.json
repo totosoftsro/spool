@@ -1,0 +1,8 @@
+{
+  "id": "canonical/lossy-max-safe-not-lossy",
+  "kind": "lossy",
+  "level": "core",
+  "description": "2^53-1 is exact.",
+  "text": "{\"a\": 9007199254740991}",
+  "expected": []
+}

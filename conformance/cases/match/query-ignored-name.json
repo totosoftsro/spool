@@ -1,0 +1,24 @@
+{
+  "id": "match/query-ignored-name",
+  "kind": "match",
+  "level": "core",
+  "description": "An ignored name is dropped from both sides.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1&ts=1"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1&ts=999"
+  },
+  "config": {
+    "query": {
+      "ignore": [
+        "ts"
+      ]
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

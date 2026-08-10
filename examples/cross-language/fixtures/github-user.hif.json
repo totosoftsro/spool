@@ -1,0 +1,102 @@
+{
+  "hif": "1.0",
+  "meta": {
+    "name": "github-user",
+    "description": "One request against a public read-only API, recorded once and replayed from both Python and TypeScript. The point of this file is that it is the same file.",
+    "recorder": { "name": "spool-python", "version": "0.1.0" },
+    "redaction": { "applied": true, "rules": ["headers"] }
+  },
+  "defaults": {
+    "match": { "headers": { "mode": "listed", "include": ["accept"] } }
+  },
+  "interactions": [
+    {
+      "id": "get-octocat",
+      "request": {
+        "method": "GET",
+        "url": "https://api.github.com/users/octocat",
+        "headers": [
+          ["accept", "application/vnd.github+json"],
+          ["authorization", "{{redacted}}"],
+          ["user-agent", "{{any}}"]
+        ]
+      },
+      "response": {
+        "status": 200,
+        "statusText": "OK",
+        "headers": [
+          ["content-type", "application/json; charset=utf-8"],
+          ["x-ratelimit-remaining", "59"]
+        ],
+        "body": {
+          "encoding": "json",
+          "json": {
+            "login": "octocat",
+            "id": 583231,
+            "type": "User",
+            "site_admin": false,
+            "public_repos": 8
+          }
+        }
+      },
+      "timing": { "latencyMs": 187 },
+      "replay": { "times": "unlimited" },
+      "expect": { "called": "atLeastOnce" }
+    },
+    {
+      "id": "get-missing-user",
+      "request": {
+        "method": "GET",
+        "url": "https://api.github.com/users/this-user-does-not-exist-000",
+        "headers": [["accept", "application/vnd.github+json"]]
+      },
+      "response": {
+        "status": 404,
+        "headers": [["content-type", "application/json; charset=utf-8"]],
+        "body": {
+          "encoding": "json",
+          "json": { "message": "Not Found", "status": "404" }
+        }
+      }
+    },
+    {
+      "id": "rate-limited-then-ok",
+      "request": {
+        "method": "GET",
+        "url": "https://api.github.com/users/octocat/repos",
+        "headers": [["accept", "application/vnd.github+json"]]
+      },
+      "response": {
+        "status": 403,
+        "headers": [
+          ["content-type", "application/json; charset=utf-8"],
+          ["retry-after", "1"]
+        ],
+        "body": {
+          "encoding": "json",
+          "json": { "message": "API rate limit exceeded" }
+        }
+      }
+    },
+    {
+      "id": "repos-after-retry",
+      "request": {
+        "method": "GET",
+        "url": "https://api.github.com/users/octocat/repos",
+        "headers": [["accept", "application/vnd.github+json"]]
+      },
+      "response": {
+        "status": 200,
+        "headers": [["content-type", "application/json; charset=utf-8"]],
+        "body": {
+          "encoding": "json",
+          "json": [
+            { "name": "Hello-World", "fork": false },
+            { "name": "Spoon-Knife", "fork": false }
+          ]
+        }
+      },
+      "replay": { "times": "unlimited" }
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "id": "select/explicit-times",
+  "kind": "select",
+  "level": "core",
+  "description": "times: 2 permits exactly two plays.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "twice",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 200
+        },
+        "replay": {
+          "times": 2
+        }
+      }
+    ]
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "twice",
+      "twice",
+      "<unmatched>"
+    ]
+  }
+}

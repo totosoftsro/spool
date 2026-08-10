@@ -1,0 +1,21 @@
+{
+  "id": "normalize/empty-path-with-query",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 4 applies before the query is considered.",
+  "url": "https://x.test?a=1",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/",
+    "query": [
+      {
+        "name": "a",
+        "value": "1",
+        "valueless": false
+      }
+    ],
+    "href": "https://x.test/?a=1"
+  }
+}

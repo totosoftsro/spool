@@ -1,0 +1,15 @@
+{
+  "id": "normalize/dot-segments-above-root",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 7: traversal above the root is clamped, not an error.",
+  "url": "https://x.test/a/../../b",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/b",
+    "query": [],
+    "href": "https://x.test/b"
+  }
+}

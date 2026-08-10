@@ -1,0 +1,26 @@
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+.npm/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editors and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local scratch
+/tmp/
+*.local.json

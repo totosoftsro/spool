@@ -1,0 +1,30 @@
+{
+  "id": "match/placeholder-regex-anchored",
+  "kind": "match",
+  "level": "core",
+  "description": "An unanchored substring must not match.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "{{regex:v[0-9]+}}"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "xv12"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

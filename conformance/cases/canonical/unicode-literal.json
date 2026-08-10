@@ -1,0 +1,10 @@
+{
+  "id": "canonical/unicode-literal",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Non-ASCII code points are emitted literally as UTF-8, not escaped.",
+  "value": {
+    "s": "é中"
+  },
+  "expected": "{\"s\":\"é中\"}"
+}

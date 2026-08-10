@@ -1,0 +1,20 @@
+{
+  "id": "match/regex-dot-excludes-only-lf",
+  "kind": "regex",
+  "level": "core",
+  "description": "`.` excludes U+000A only, unlike JavaScript's `.` which also excludes \\r.",
+  "pattern": "a.b",
+  "subjects": [
+    "a\rb",
+    "a\nb",
+    "axb"
+  ],
+  "expected": {
+    "valid": true,
+    "matches": [
+      true,
+      false,
+      true
+    ]
+  }
+}

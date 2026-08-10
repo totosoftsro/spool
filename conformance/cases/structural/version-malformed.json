@@ -1,0 +1,14 @@
+{
+  "id": "structural/version-malformed",
+  "kind": "structural",
+  "level": "core",
+  "description": "The version must be MAJOR.MINOR.",
+  "document": {
+    "hif": "1",
+    "interactions": []
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "MAJOR"
+  }
+}

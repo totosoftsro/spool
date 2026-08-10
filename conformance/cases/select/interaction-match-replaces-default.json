@@ -1,0 +1,47 @@
+{
+  "id": "select/interaction-match-replaces-default",
+  "kind": "select",
+  "level": "core",
+  "description": "Merging is shallow per named sub-object: an interaction's match.query replaces defaults.match.query wholesale rather than deep merging with it.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "a",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/a?v=1"
+        },
+        "response": {
+          "status": 200
+        },
+        "match": {
+          "query": {
+            "mode": "exact"
+          }
+        }
+      }
+    ],
+    "defaults": {
+      "match": {
+        "query": {
+          "mode": "ignore",
+          "ignore": [
+            "v"
+          ]
+        }
+      }
+    }
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/a?v=999"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "<unmatched>"
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "redact/entropy-multiple-tokens",
+  "kind": "entropy",
+  "level": "redact",
+  "description": "Splitting happens on characters outside the credential alphabet (step 1).",
+  "subject": "k1=aB3xY9zQ7mN2pL5kR8sT4vW6 k2=zQ8mN3pL6kR9sT5vW7xY2aB4",
+  "config": {
+    "minLength": 24,
+    "maxLength": 512,
+    "minBits": 3.5
+  },
+  "expected": {
+    "tokens": [
+      "aB3xY9zQ7mN2pL5kR8sT4vW6",
+      "zQ8mN3pL6kR9sT5vW7xY2aB4"
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "select/document-order",
+  "kind": "select",
+  "level": "core",
+  "description": "Identical recorded requests are played in document order, which is how a poll-until-done sequence is expressed without any special construct.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "pending",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "encoding": "json",
+            "json": {
+              "state": "pending"
+            }
+          }
+        }
+      },
+      {
+        "id": "done",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "encoding": "json",
+            "json": {
+              "state": "done"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "pending",
+      "done",
+      "<unmatched>"
+    ]
+  }
+}

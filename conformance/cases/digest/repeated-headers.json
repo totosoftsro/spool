@@ -1,0 +1,22 @@
+{
+  "id": "digest/repeated-headers",
+  "kind": "digest",
+  "level": "core",
+  "description": "Repeated names produce repeated entries, sorted by value.",
+  "request": {
+    "method": "GET",
+    "url": "https://x.test/",
+    "headers": [
+      [
+        "x",
+        "2"
+      ],
+      [
+        "x",
+        "1"
+      ]
+    ]
+  },
+  "preimage": "{\"b\":null,\"h\":[[\"x\",\"1\"],[\"x\",\"2\"]],\"m\":\"GET\",\"u\":\"https://x.test/\"}",
+  "digest": "76b54a98335fb391696bdba16a9ff72df76fe9ae1b8af6e98acdb011f0bf961f"
+}

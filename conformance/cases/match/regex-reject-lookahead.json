@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-lookahead",
+  "kind": "regex",
+  "level": "core",
+  "description": "Lookaround is excluded.",
+  "pattern": "a(?=b)",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

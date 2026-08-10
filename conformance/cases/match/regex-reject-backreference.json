@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-backreference",
+  "kind": "regex",
+  "level": "core",
+  "description": "Backreferences are excluded.",
+  "pattern": "(a)\\1",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

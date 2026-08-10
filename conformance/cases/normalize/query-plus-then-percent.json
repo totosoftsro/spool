@@ -1,0 +1,14 @@
+{
+  "id": "normalize/query-plus-then-percent",
+  "kind": "query",
+  "level": "core",
+  "description": "Step 4: + becomes a space, then percent-decoding runs.",
+  "query": "q=a+b%20c",
+  "expected": [
+    {
+      "name": "q",
+      "value": "a b c",
+      "valueless": false
+    }
+  ]
+}

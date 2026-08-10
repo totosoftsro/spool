@@ -1,0 +1,86 @@
+{
+  "id": "redact/default-rules",
+  "kind": "redact",
+  "level": "redact",
+  "description": "Default header, query and JSON-field rules all fire, and the replacement is {{redacted}}.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/login?api_key=abc123&page=2",
+          "headers": [
+            [
+              "authorization",
+              "Bearer secret"
+            ],
+            [
+              "content-type",
+              "application/json"
+            ]
+          ],
+          "body": {
+            "encoding": "json",
+            "json": {
+              "user": "ada",
+              "password": "hunter2",
+              "keep": 1
+            }
+          }
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            [
+              "set-cookie",
+              "session=abc"
+            ]
+          ],
+          "body": {
+            "encoding": "json",
+            "json": {
+              "access_token": "xyz",
+              "ok": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "config": {},
+  "expected": {
+    "rules": [
+      "headers",
+      "jsonFields",
+      "queryParams"
+    ],
+    "requestHeaders": [
+      [
+        "authorization",
+        "{{redacted}}"
+      ],
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "requestBodyJson": {
+      "user": "ada",
+      "password": "{{redacted}}",
+      "keep": 1
+    },
+    "responseHeaders": [
+      [
+        "set-cookie",
+        "{{redacted}}"
+      ]
+    ],
+    "responseBodyJson": {
+      "access_token": "{{redacted}}",
+      "ok": true
+    },
+    "requestBodyRedactedFlag": true,
+    "metaApplied": true
+  }
+}

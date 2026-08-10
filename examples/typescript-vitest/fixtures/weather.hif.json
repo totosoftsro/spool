@@ -1,0 +1,50 @@
+{
+  "hif": "1.0",
+  "meta": {
+    "name": "weather-api",
+    "recorder": { "name": "spool-typescript", "version": "0.1.0" },
+    "redaction": { "applied": true, "rules": ["queryParams"] }
+  },
+  "interactions": [
+    {
+      "id": "current-conditions",
+      "request": {
+        "method": "GET",
+        "url": "https://api.weather.example/v1/current?api_key=%7B%7Bredacted%7D%7D&lat=51.5&lon=-0.13"
+      },
+      "response": {
+        "status": 200,
+        "headers": [["content-type", "application/json"]],
+        "body": {
+          "encoding": "json",
+          "json": { "tempC": 14.5, "condition": "cloudy", "observedAt": "2026-08-10T09:00:00Z" }
+        }
+      },
+      "timing": { "latencyMs": 92 },
+      "expect": { "called": "once" }
+    },
+    {
+      "id": "submit-reading",
+      "request": {
+        "method": "POST",
+        "url": "https://api.weather.example/v1/readings",
+        "headers": [["content-type", "application/json"]],
+        "body": {
+          "encoding": "json",
+          "json": {
+            "stationId": "LHR-01",
+            "tempC": 14.5,
+            "recordedAt": "{{any:iso8601}}",
+            "requestId": "{{any:uuid}}"
+          }
+        }
+      },
+      "response": { "status": 202 }
+    },
+    {
+      "id": "upstream-down",
+      "request": { "method": "GET", "url": "https://api.weather.example/v1/forecast" },
+      "fault": { "type": "timeout", "message": "upstream provider did not respond" }
+    }
+  ]
+}

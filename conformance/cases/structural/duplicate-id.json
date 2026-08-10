@@ -1,0 +1,35 @@
+{
+  "id": "structural/duplicate-id",
+  "kind": "structural",
+  "level": "core",
+  "description": "Interaction ids must be unique.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "a",
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        }
+      },
+      {
+        "id": "a",
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "Duplicate"
+  }
+}

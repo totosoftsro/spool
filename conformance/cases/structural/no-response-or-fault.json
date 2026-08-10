@@ -1,0 +1,21 @@
+{
+  "id": "structural/no-response-or-fault",
+  "kind": "structural",
+  "level": "core",
+  "description": "An interaction needs a response or a fault.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "fault"
+  }
+}

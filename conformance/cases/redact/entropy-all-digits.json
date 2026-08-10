@@ -1,0 +1,15 @@
+{
+  "id": "redact/entropy-all-digits",
+  "kind": "entropy",
+  "level": "redact",
+  "description": "Step 3 requires at least one letter.",
+  "subject": "123456789012345678901234567890",
+  "config": {
+    "minLength": 24,
+    "maxLength": 512,
+    "minBits": 3.5
+  },
+  "expected": {
+    "tokens": []
+  }
+}

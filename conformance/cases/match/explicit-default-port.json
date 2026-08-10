@@ -1,0 +1,18 @@
+{
+  "id": "match/explicit-default-port",
+  "kind": "match",
+  "level": "core",
+  "description": "Port comparison uses the effective port after default removal.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/v1/users"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test:443/v1/users"
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "match/query-valueless-vs-empty",
+  "kind": "match",
+  "level": "core",
+  "description": "A valueless parameter is distinct from one with an empty value.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?f"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?f="
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

@@ -1,0 +1,54 @@
+name: Specification change
+description: Propose a change to the HIF format itself.
+labels: ["specification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The value of HIF is that independent implementations agree. A format
+        change therefore carries a heavier process than a code change: two
+        maintainer approvals, conformance cases, and updates to every
+        implementation. See GOVERNANCE.md.
+
+        Additive, optional changes are much easier to land than changes to the
+        meaning of an existing member.
+
+  - type: input
+    id: section
+    attributes:
+      label: Section
+      placeholder: "§7.4.2"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What the current text cannot express, or gets wrong
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed wording
+      description: Normative text, as close to final as you can manage.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: compat
+    attributes:
+      label: Compatibility
+      options:
+        - "Additive and optional — a 1.0 reader can ignore it (MINOR)"
+        - "Changes the meaning of an existing member (MAJOR)"
+        - "Editorial only — clarifies without changing behaviour"
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: What happens to existing fixtures
+      description: Required for anything that is not additive.

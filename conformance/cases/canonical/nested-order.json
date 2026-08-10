@@ -1,0 +1,13 @@
+{
+  "id": "canonical/nested-order",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Sorting is recursive.",
+  "value": {
+    "z": {
+      "b": 1,
+      "a": 2
+    }
+  },
+  "expected": "{\"z\":{\"a\":2,\"b\":1}}"
+}

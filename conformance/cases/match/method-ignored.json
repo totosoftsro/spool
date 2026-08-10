@@ -1,0 +1,20 @@
+{
+  "id": "match/method-ignored",
+  "kind": "match",
+  "level": "core",
+  "description": "match.method: ignore.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/v1/users"
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users"
+  },
+  "config": {
+    "method": "ignore"
+  },
+  "expected": {
+    "matches": true
+  }
+}

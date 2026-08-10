@@ -1,0 +1,28 @@
+{
+  "id": "structural/invalid-base64",
+  "kind": "structural",
+  "level": "core",
+  "description": "Base64 must use the RFC 4648 section 4 alphabet.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/",
+          "body": {
+            "encoding": "base64",
+            "base64": "!!!"
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "base64"
+  }
+}

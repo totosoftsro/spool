@@ -1,0 +1,49 @@
+{
+  "id": "match/body-json-missing-always-fails",
+  "kind": "match",
+  "level": "core",
+  "description": "extra governs only the unexpected direction; a missing member always fails.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada"
+      }
+    }
+  },
+  "config": {
+    "body": {
+      "json": {
+        "extra": "allow"
+      }
+    }
+  },
+  "expected": {
+    "matches": false
+  }
+}

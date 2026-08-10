@@ -1,0 +1,14 @@
+{
+  "id": "structural/version-not-string",
+  "kind": "structural",
+  "level": "core",
+  "description": "The version must be a string.",
+  "document": {
+    "hif": 1.0,
+    "interactions": []
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "hif"
+  }
+}

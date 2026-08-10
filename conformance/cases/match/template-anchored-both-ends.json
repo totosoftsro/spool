@@ -1,0 +1,19 @@
+{
+  "id": "match/template-anchored-both-ends",
+  "kind": "template",
+  "level": "core",
+  "description": "The template is anchored at both ends.",
+  "recorded": "id=<{{any}}> ok",
+  "subjects": [
+    "id=<abc> ok",
+    "xid=<abc> ok",
+    "id=<abc> ok!"
+  ],
+  "expected": {
+    "matches": [
+      true,
+      false,
+      false
+    ]
+  }
+}

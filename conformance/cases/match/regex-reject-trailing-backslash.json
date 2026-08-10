@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-trailing-backslash",
+  "kind": "regex",
+  "level": "core",
+  "description": "A trailing backslash is malformed.",
+  "pattern": "a\\",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

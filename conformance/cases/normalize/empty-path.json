@@ -1,0 +1,15 @@
+{
+  "id": "normalize/empty-path",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 4: an empty path becomes /.",
+  "url": "https://x.test",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/",
+    "query": [],
+    "href": "https://x.test/"
+  }
+}

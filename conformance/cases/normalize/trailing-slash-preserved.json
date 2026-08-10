@@ -1,0 +1,15 @@
+{
+  "id": "normalize/trailing-slash-preserved",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Normalization must not add or remove a trailing slash.",
+  "url": "https://x.test/a/",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a/",
+    "query": [],
+    "href": "https://x.test/a/"
+  }
+}

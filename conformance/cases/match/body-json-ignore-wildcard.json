@@ -1,0 +1,56 @@
+{
+  "id": "match/body-json-ignore-wildcard",
+  "kind": "match",
+  "level": "core",
+  "description": "A wildcard token matches every array index.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "items": [
+          {
+            "id": 1,
+            "t": "a"
+          },
+          {
+            "id": 2,
+            "t": "b"
+          }
+        ]
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "items": [
+          {
+            "id": 1,
+            "t": "z"
+          },
+          {
+            "id": 2,
+            "t": "y"
+          }
+        ]
+      }
+    }
+  },
+  "config": {
+    "body": {
+      "json": {
+        "ignore": [
+          "/items/*/t"
+        ]
+      }
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "digest/empty-body-is-null",
+  "kind": "digest",
+  "level": "core",
+  "description": "An empty body and an absent body produce the same pre-image.",
+  "request": {
+    "method": "POST",
+    "url": "https://x.test/a",
+    "body": {
+      "encoding": "empty"
+    }
+  },
+  "preimage": "{\"b\":null,\"h\":[],\"m\":\"POST\",\"u\":\"https://x.test/a\"}",
+  "digest": "dd10e2d9583ecc9be96d3ef5f3fba00c3868d8cb05aaffec1c62a9d463de0b3b"
+}

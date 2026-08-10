@@ -1,0 +1,26 @@
+{
+  "id": "normalize/query-not-sorted",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Normalization must not sort query parameters.",
+  "url": "https://x.test/a?b=2&a=1",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a",
+    "query": [
+      {
+        "name": "b",
+        "value": "2",
+        "valueless": false
+      },
+      {
+        "name": "a",
+        "value": "1",
+        "valueless": false
+      }
+    ],
+    "href": "https://x.test/a?b=2&a=1"
+  }
+}

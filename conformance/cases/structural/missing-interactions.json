@@ -1,0 +1,13 @@
+{
+  "id": "structural/missing-interactions",
+  "kind": "structural",
+  "level": "core",
+  "description": "The interactions array is required.",
+  "document": {
+    "hif": "1.0"
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "interactions"
+  }
+}

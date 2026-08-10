@@ -1,0 +1,10 @@
+{
+  "id": "canonical/control-character",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Other C0 controls use \\u00xx with lowercase hex.",
+  "value": {
+    "s": "\u0001"
+  },
+  "expected": "{\"s\":\"\\u0001\"}"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "canonical/lossy-equivalent-forms-not-lossy",
+  "kind": "lossy",
+  "level": "core",
+  "description": "A literal written differently from its canonical form is not lossy if the value is unchanged.",
+  "text": "{\"a\": 1.0, \"b\": 1e2, \"c\": 0.5, \"d\": 100e-2}",
+  "expected": []
+}

@@ -1,0 +1,22 @@
+{
+  "id": "digest/headers-sorted-lowercased",
+  "kind": "digest",
+  "level": "core",
+  "description": "Headers are lowercased and sorted by (name, value).",
+  "request": {
+    "method": "GET",
+    "url": "https://x.test/",
+    "headers": [
+      [
+        "B-Header",
+        "2"
+      ],
+      [
+        "a-header",
+        "1"
+      ]
+    ]
+  },
+  "preimage": "{\"b\":null,\"h\":[[\"a-header\",\"1\"],[\"b-header\",\"2\"]],\"m\":\"GET\",\"u\":\"https://x.test/\"}",
+  "digest": "795d32cb9db671cd359a4a1f0c48d8107f44304dfefe8f266dd0179c1802e7d8"
+}

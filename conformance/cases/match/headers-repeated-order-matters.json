@@ -1,0 +1,42 @@
+{
+  "id": "match/headers-repeated-order-matters",
+  "kind": "match",
+  "level": "core",
+  "description": "Repeated values for one name are compared as an ordered list.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x",
+        "1"
+      ],
+      [
+        "x",
+        "2"
+      ]
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x",
+        "2"
+      ],
+      [
+        "x",
+        "1"
+      ]
+    ]
+  },
+  "config": {
+    "headers": {
+      "mode": "all"
+    }
+  },
+  "expected": {
+    "matches": false
+  }
+}

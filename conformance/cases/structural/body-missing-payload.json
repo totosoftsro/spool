@@ -1,0 +1,27 @@
+{
+  "id": "structural/body-missing-payload",
+  "kind": "structural",
+  "level": "core",
+  "description": "A text body requires its text member.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/",
+          "body": {
+            "encoding": "text"
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "text"
+  }
+}

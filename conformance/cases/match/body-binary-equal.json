@@ -1,0 +1,26 @@
+{
+  "id": "match/body-binary-equal",
+  "kind": "match",
+  "level": "core",
+  "description": "Identical binary bodies match byte-for-byte.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "base64",
+      "base64": "3q2+7w=="
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "base64",
+      "base64": "3q2+7w=="
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

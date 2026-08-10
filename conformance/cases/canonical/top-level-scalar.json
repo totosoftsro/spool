@@ -1,0 +1,8 @@
+{
+  "id": "canonical/top-level-scalar",
+  "kind": "canonical",
+  "level": "core",
+  "description": "A bare string is a valid JSON document.",
+  "value": "hello",
+  "expected": "\"hello\""
+}

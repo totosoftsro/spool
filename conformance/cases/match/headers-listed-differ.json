@@ -1,0 +1,51 @@
+{
+  "id": "match/headers-listed-differ",
+  "kind": "match",
+  "level": "core",
+  "description": "A listed field with a different value fails.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "text/plain"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "config": {
+    "headers": {
+      "mode": "listed",
+      "include": [
+        "content-type"
+      ]
+    }
+  },
+  "expected": {
+    "matches": false
+  }
+}

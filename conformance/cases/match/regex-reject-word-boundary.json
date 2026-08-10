@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-word-boundary",
+  "kind": "regex",
+  "level": "core",
+  "description": "Word boundaries are excluded.",
+  "pattern": "\\bword",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "normalize/default-port-http",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 3: 80 is the http default.",
+  "url": "http://x.test:80/a",
+  "expected": {
+    "scheme": "http",
+    "host": "x.test",
+    "port": null,
+    "path": "/a",
+    "query": [],
+    "href": "http://x.test/a"
+  }
+}

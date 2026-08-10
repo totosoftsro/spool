@@ -1,0 +1,52 @@
+{
+  "id": "select/first-match-wins",
+  "kind": "select",
+  "level": "core",
+  "description": "When several interactions match, the first in document order is selected.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "specific",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job?id=1"
+        },
+        "response": {
+          "status": 200
+        }
+      },
+      {
+        "id": "loose",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job?id=2"
+        },
+        "response": {
+          "status": 200
+        },
+        "match": {
+          "query": {
+            "mode": "ignore"
+          }
+        }
+      }
+    ]
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job?id=1"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job?id=1"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "specific",
+      "loose"
+    ]
+  }
+}

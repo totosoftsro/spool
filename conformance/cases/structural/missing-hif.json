@@ -1,0 +1,13 @@
+{
+  "id": "structural/missing-hif",
+  "kind": "structural",
+  "level": "core",
+  "description": "The version member is required.",
+  "document": {
+    "interactions": []
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "hif"
+  }
+}

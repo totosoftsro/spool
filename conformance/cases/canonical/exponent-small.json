@@ -1,0 +1,10 @@
+{
+  "id": "canonical/exponent-small",
+  "kind": "canonical",
+  "level": "core",
+  "description": "ECMAScript writes 1e-7, not Python's 1e-07. This is a known divergence point.",
+  "value": {
+    "x": 1e-07
+  },
+  "expected": "{\"x\":1e-7}"
+}

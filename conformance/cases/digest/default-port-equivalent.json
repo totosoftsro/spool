@@ -1,0 +1,12 @@
+{
+  "id": "digest/default-port-equivalent",
+  "kind": "digest",
+  "level": "core",
+  "description": "Normalization runs before the digest, so an explicit default port produces the same pre-image.",
+  "request": {
+    "method": "GET",
+    "url": "https://x.test:443/"
+  },
+  "preimage": "{\"b\":null,\"h\":[],\"m\":\"GET\",\"u\":\"https://x.test/\"}",
+  "digest": "17ff2b4107ca6021410afa60043354650b3bb2a3f2e23cf8a244c78807b0b575"
+}

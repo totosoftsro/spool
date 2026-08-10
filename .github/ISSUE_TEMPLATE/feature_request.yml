@@ -1,0 +1,46 @@
+name: Feature request
+description: Propose a change to an implementation.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For changes to the **fixture format** rather than to an implementation,
+        use the "Specification change" template instead — the bar and the process
+        are different.
+
+        Please read the Scope section of GOVERNANCE.md first. Some things are
+        deliberately out of scope.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do that is currently hard or impossible?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you tried instead
+      description: Existing features that nearly work, and why they do not.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Does this affect the fixture format?
+      description: If yes, it needs a specification change and both implementations.
+      options:
+        - "No — implementation only"
+        - "Yes — it changes what a fixture can express"
+        - "I am not sure"
+    validations:
+      required: true

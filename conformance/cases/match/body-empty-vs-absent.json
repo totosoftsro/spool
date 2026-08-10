@@ -1,0 +1,21 @@
+{
+  "id": "match/body-empty-vs-absent",
+  "kind": "match",
+  "level": "core",
+  "description": "An absent body and an empty body are identical.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "empty"
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

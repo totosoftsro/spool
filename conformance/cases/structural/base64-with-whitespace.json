@@ -1,0 +1,28 @@
+{
+  "id": "structural/base64-with-whitespace",
+  "kind": "structural",
+  "level": "core",
+  "description": "Whitespace in base64 is not permitted.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/",
+          "body": {
+            "encoding": "base64",
+            "base64": "3q2+ 7w=="
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "base64"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "match/regex-escaped-question-mark",
+  "kind": "regex",
+  "level": "core",
+  "description": "An escaped literal followed by a quantifier is valid, and is not a lazy quantifier.",
+  "pattern": "a\\??",
+  "subjects": [
+    "a?",
+    "a",
+    "a??"
+  ],
+  "expected": {
+    "valid": true,
+    "matches": [
+      true,
+      true,
+      false
+    ]
+  }
+}

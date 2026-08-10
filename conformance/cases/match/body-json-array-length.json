@@ -1,0 +1,35 @@
+{
+  "id": "match/body-json-array-length",
+  "kind": "match",
+  "level": "core",
+  "description": "A different array length fails.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "xs": [
+          1
+        ]
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "xs": [
+          1,
+          2
+        ]
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

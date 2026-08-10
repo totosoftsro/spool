@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-nothing-to-repeat",
+  "kind": "regex",
+  "level": "core",
+  "description": "A quantifier with nothing to repeat is malformed.",
+  "pattern": "*a",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "select/fault-then-success",
+  "kind": "select",
+  "level": "full",
+  "description": "The retry test: the first call fails at the transport layer, later calls succeed.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "reset",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "fault": {
+          "type": "connection-reset"
+        }
+      },
+      {
+        "id": "ok",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 200
+        },
+        "replay": {
+          "times": "unlimited"
+        }
+      }
+    ]
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "reset",
+      "ok"
+    ],
+    "faults": [
+      "connection-reset",
+      null
+    ]
+  }
+}

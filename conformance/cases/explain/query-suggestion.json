@@ -1,0 +1,38 @@
+{
+  "id": "explain/query-suggestion",
+  "kind": "explain",
+  "level": "explain",
+  "description": "A differing query parameter yields a verified query.ignore suggestion.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "a",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/a?v=1&ts=100"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?v=1&ts=999"
+  },
+  "expected": {
+    "reasons": [
+      "query.value-differs"
+    ],
+    "suggestions": [
+      {
+        "target": "interactions[0].match.query.ignore",
+        "value": [
+          "ts"
+        ]
+      }
+    ]
+  }
+}

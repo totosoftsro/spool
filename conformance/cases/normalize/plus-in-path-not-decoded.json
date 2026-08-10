@@ -1,0 +1,15 @@
+{
+  "id": "normalize/plus-in-path-not-decoded",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Normalization must not decode + in the path; + is only a space in the query.",
+  "url": "https://x.test/a+b",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a+b",
+    "query": [],
+    "href": "https://x.test/a+b"
+  }
+}

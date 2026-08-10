@@ -1,0 +1,34 @@
+{
+  "id": "match/placeholder-any-json",
+  "kind": "match",
+  "level": "core",
+  "description": "{{any}} matches a composite value.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "id": "{{any}}",
+        "n": 1
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "id": {
+          "nested": true
+        },
+        "n": 1
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

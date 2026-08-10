@@ -1,0 +1,24 @@
+{
+  "id": "structural/status-out-of-range",
+  "kind": "structural",
+  "level": "core",
+  "description": "Status must be in 100..599.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 99
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "status"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": "structural/missing-method",
+  "kind": "structural",
+  "level": "core",
+  "description": "A request needs a method.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "method"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "match/query-extra-rejected",
+  "kind": "match",
+  "level": "core",
+  "description": "Exact mode rejects an extra parameter.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1&b=2"
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

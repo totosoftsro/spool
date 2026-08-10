@@ -1,0 +1,80 @@
+{
+  "id": "explain/missing-member",
+  "kind": "explain",
+  "level": "explain",
+  "description": "A missing member cannot be fixed by extra: allow, so a different suggestion must win, or none at all.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "unrelated",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/other"
+        },
+        "response": {
+          "status": 200
+        }
+      },
+      {
+        "id": "create-user",
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/api/users",
+          "headers": [
+            [
+              "content-type",
+              "application/json"
+            ]
+          ],
+          "body": {
+            "encoding": "json",
+            "json": {
+              "email": "{{any:string}}",
+              "name": "John"
+            }
+          }
+        },
+        "response": {
+          "status": 201
+        }
+      }
+    ]
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/api/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "email": "john@example.com"
+      }
+    }
+  },
+  "expected": {
+    "candidateOrder": [
+      "create-user",
+      "unrelated"
+    ],
+    "reasons": [
+      "json.missing-member"
+    ],
+    "paths": [
+      "/name"
+    ],
+    "suggestions": [
+      {
+        "target": "interactions[1].match.body.json.ignore",
+        "value": [
+          "/name"
+        ]
+      }
+    ]
+  }
+}

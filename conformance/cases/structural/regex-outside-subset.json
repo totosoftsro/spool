@@ -1,0 +1,30 @@
+{
+  "id": "structural/regex-outside-subset",
+  "kind": "structural",
+  "level": "core",
+  "description": "An excluded regex construct is a load-time structural error, not a match-time surprise.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/",
+          "body": {
+            "encoding": "json",
+            "json": {
+              "a": "{{regex:(?:x)}}"
+            }
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "subset"
+  }
+}

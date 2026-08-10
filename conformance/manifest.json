@@ -1,0 +1,1140 @@
+{
+  "suite": "hif-conformance",
+  "specVersion": "1.0",
+  "cases": [
+    {
+      "id": "normalize/lowercase-scheme-host",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/lowercase-scheme-host.json"
+    },
+    {
+      "id": "normalize/default-port-https",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/default-port-https.json"
+    },
+    {
+      "id": "normalize/default-port-http",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/default-port-http.json"
+    },
+    {
+      "id": "normalize/nondefault-port-kept",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/nondefault-port-kept.json"
+    },
+    {
+      "id": "normalize/wrong-scheme-default-port-kept",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/wrong-scheme-default-port-kept.json"
+    },
+    {
+      "id": "normalize/empty-path",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/empty-path.json"
+    },
+    {
+      "id": "normalize/empty-path-with-query",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/empty-path-with-query.json"
+    },
+    {
+      "id": "normalize/uppercase-triplets",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/uppercase-triplets.json"
+    },
+    {
+      "id": "normalize/decode-unreserved",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/decode-unreserved.json"
+    },
+    {
+      "id": "normalize/dot-segments-rfc3986",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/dot-segments-rfc3986.json"
+    },
+    {
+      "id": "normalize/dot-segments-above-root",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/dot-segments-above-root.json"
+    },
+    {
+      "id": "normalize/fragment-removed",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/fragment-removed.json"
+    },
+    {
+      "id": "normalize/query-not-sorted",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/query-not-sorted.json"
+    },
+    {
+      "id": "normalize/trailing-slash-preserved",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/trailing-slash-preserved.json"
+    },
+    {
+      "id": "normalize/plus-in-path-not-decoded",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/plus-in-path-not-decoded.json"
+    },
+    {
+      "id": "normalize/idn-to-alabel",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/idn-to-alabel.json"
+    },
+    {
+      "id": "normalize/query-split-first-equals",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-split-first-equals.json"
+    },
+    {
+      "id": "normalize/query-valueless-vs-empty",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-valueless-vs-empty.json"
+    },
+    {
+      "id": "normalize/query-plus-then-percent",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-plus-then-percent.json"
+    },
+    {
+      "id": "normalize/query-empty-segments-dropped",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-empty-segments-dropped.json"
+    },
+    {
+      "id": "normalize/query-repetition-preserved",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-repetition-preserved.json"
+    },
+    {
+      "id": "normalize/query-utf8-percent-decoded",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-utf8-percent-decoded.json"
+    },
+    {
+      "id": "normalize/query-empty-query",
+      "kind": "query",
+      "level": "core",
+      "file": "cases/normalize/query-empty-query.json"
+    },
+    {
+      "id": "canonical/member-order",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/member-order.json"
+    },
+    {
+      "id": "canonical/nested-order",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/nested-order.json"
+    },
+    {
+      "id": "canonical/array-order-preserved",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/array-order-preserved.json"
+    },
+    {
+      "id": "canonical/integer-float",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/integer-float.json"
+    },
+    {
+      "id": "canonical/negative-zero",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/negative-zero.json"
+    },
+    {
+      "id": "canonical/exponent-large",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/exponent-large.json"
+    },
+    {
+      "id": "canonical/exponent-just-below",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/exponent-just-below.json"
+    },
+    {
+      "id": "canonical/exponent-small",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/exponent-small.json"
+    },
+    {
+      "id": "canonical/exponent-just-above",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/exponent-just-above.json"
+    },
+    {
+      "id": "canonical/max-safe-integer",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/max-safe-integer.json"
+    },
+    {
+      "id": "canonical/string-escapes",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/string-escapes.json"
+    },
+    {
+      "id": "canonical/control-character",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/control-character.json"
+    },
+    {
+      "id": "canonical/unicode-literal",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/unicode-literal.json"
+    },
+    {
+      "id": "canonical/empty-containers",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/empty-containers.json"
+    },
+    {
+      "id": "canonical/null-and-booleans",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/null-and-booleans.json"
+    },
+    {
+      "id": "canonical/top-level-scalar",
+      "kind": "canonical",
+      "level": "core",
+      "file": "cases/canonical/top-level-scalar.json"
+    },
+    {
+      "id": "canonical/lossy-large-integer",
+      "kind": "lossy",
+      "level": "core",
+      "file": "cases/canonical/lossy-large-integer.json"
+    },
+    {
+      "id": "canonical/lossy-equivalent-forms-not-lossy",
+      "kind": "lossy",
+      "level": "core",
+      "file": "cases/canonical/lossy-equivalent-forms-not-lossy.json"
+    },
+    {
+      "id": "canonical/lossy-string-contents-ignored",
+      "kind": "lossy",
+      "level": "core",
+      "file": "cases/canonical/lossy-string-contents-ignored.json"
+    },
+    {
+      "id": "canonical/lossy-max-safe-not-lossy",
+      "kind": "lossy",
+      "level": "core",
+      "file": "cases/canonical/lossy-max-safe-not-lossy.json"
+    },
+    {
+      "id": "canonical/lossy-beyond-max-safe",
+      "kind": "lossy",
+      "level": "core",
+      "file": "cases/canonical/lossy-beyond-max-safe.json"
+    },
+    {
+      "id": "digest/minimal-get",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/minimal-get.json"
+    },
+    {
+      "id": "digest/default-port-equivalent",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/default-port-equivalent.json"
+    },
+    {
+      "id": "digest/query-sorted",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/query-sorted.json"
+    },
+    {
+      "id": "digest/headers-sorted-lowercased",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/headers-sorted-lowercased.json"
+    },
+    {
+      "id": "digest/repeated-headers",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/repeated-headers.json"
+    },
+    {
+      "id": "digest/json-body",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/json-body.json"
+    },
+    {
+      "id": "digest/text-body",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/text-body.json"
+    },
+    {
+      "id": "digest/binary-body",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/binary-body.json"
+    },
+    {
+      "id": "digest/empty-body-is-null",
+      "kind": "digest",
+      "level": "core",
+      "file": "cases/digest/empty-body-is-null.json"
+    },
+    {
+      "id": "match/identical-get",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/identical-get.json"
+    },
+    {
+      "id": "match/method-differs",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/method-differs.json"
+    },
+    {
+      "id": "match/method-ignored",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/method-ignored.json"
+    },
+    {
+      "id": "match/host-differs",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/host-differs.json"
+    },
+    {
+      "id": "match/path-differs",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/path-differs.json"
+    },
+    {
+      "id": "match/scheme-differs",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/scheme-differs.json"
+    },
+    {
+      "id": "match/explicit-default-port",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/explicit-default-port.json"
+    },
+    {
+      "id": "match/percent-encoding-equivalent",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/percent-encoding-equivalent.json"
+    },
+    {
+      "id": "match/reserved-encoding-not-equivalent",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/reserved-encoding-not-equivalent.json"
+    },
+    {
+      "id": "match/query-reordered",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-reordered.json"
+    },
+    {
+      "id": "match/query-extra-rejected",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-extra-rejected.json"
+    },
+    {
+      "id": "match/query-extra-subset",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-extra-subset.json"
+    },
+    {
+      "id": "match/query-missing-in-subset",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-missing-in-subset.json"
+    },
+    {
+      "id": "match/query-ignored-name",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-ignored-name.json"
+    },
+    {
+      "id": "match/query-repetition-significant",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-repetition-significant.json"
+    },
+    {
+      "id": "match/query-valueless-vs-empty",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-valueless-vs-empty.json"
+    },
+    {
+      "id": "match/query-mode-ignore",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/query-mode-ignore.json"
+    },
+    {
+      "id": "match/headers-ignored-by-default",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-ignored-by-default.json"
+    },
+    {
+      "id": "match/headers-listed-match",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-listed-match.json"
+    },
+    {
+      "id": "match/headers-listed-differ",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-listed-differ.json"
+    },
+    {
+      "id": "match/headers-all-allows-extra",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-all-allows-extra.json"
+    },
+    {
+      "id": "match/headers-all-requires-recorded",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-all-requires-recorded.json"
+    },
+    {
+      "id": "match/headers-case-insensitive-name",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-case-insensitive-name.json"
+    },
+    {
+      "id": "match/headers-ows-stripped",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-ows-stripped.json"
+    },
+    {
+      "id": "match/headers-repeated-order-matters",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-repeated-order-matters.json"
+    },
+    {
+      "id": "match/headers-ignore-in-all-mode",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/headers-ignore-in-all-mode.json"
+    },
+    {
+      "id": "match/body-json-member-order",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-member-order.json"
+    },
+    {
+      "id": "match/body-json-extra-rejected",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-extra-rejected.json"
+    },
+    {
+      "id": "match/body-json-extra-allowed",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-extra-allowed.json"
+    },
+    {
+      "id": "match/body-json-missing-always-fails",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-missing-always-fails.json"
+    },
+    {
+      "id": "match/body-json-nested-extra-allowed",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-nested-extra-allowed.json"
+    },
+    {
+      "id": "match/body-json-array-order",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-array-order.json"
+    },
+    {
+      "id": "match/body-json-array-length",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-array-length.json"
+    },
+    {
+      "id": "match/body-json-number-forms",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-number-forms.json"
+    },
+    {
+      "id": "match/body-json-ignore-path",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-ignore-path.json"
+    },
+    {
+      "id": "match/body-json-ignore-wildcard",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-ignore-wildcard.json"
+    },
+    {
+      "id": "match/body-json-ignore-nonexistent",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-ignore-nonexistent.json"
+    },
+    {
+      "id": "match/body-json-type-differs",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-json-type-differs.json"
+    },
+    {
+      "id": "match/body-empty-vs-absent",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-empty-vs-absent.json"
+    },
+    {
+      "id": "match/body-binary-equal",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-binary-equal.json"
+    },
+    {
+      "id": "match/body-binary-differs",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-binary-differs.json"
+    },
+    {
+      "id": "match/body-text-exact",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-text-exact.json"
+    },
+    {
+      "id": "match/body-mode-ignore",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-mode-ignore.json"
+    },
+    {
+      "id": "match/body-not-json",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/body-not-json.json"
+    },
+    {
+      "id": "match/placeholder-any-json",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-any-json.json"
+    },
+    {
+      "id": "match/placeholder-typed-ok",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-typed-ok.json"
+    },
+    {
+      "id": "match/placeholder-typed-fails",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-typed-fails.json"
+    },
+    {
+      "id": "match/placeholder-uuid",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-uuid.json"
+    },
+    {
+      "id": "match/placeholder-iso8601-shape-only",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-iso8601-shape-only.json"
+    },
+    {
+      "id": "match/placeholder-regex",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-regex.json"
+    },
+    {
+      "id": "match/placeholder-regex-anchored",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-regex-anchored.json"
+    },
+    {
+      "id": "match/placeholder-escaped-literal",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-escaped-literal.json"
+    },
+    {
+      "id": "match/placeholder-partial-string-is-literal",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-partial-string-is-literal.json"
+    },
+    {
+      "id": "match/placeholder-in-header",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-in-header.json"
+    },
+    {
+      "id": "match/placeholder-in-query",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/placeholder-in-query.json"
+    },
+    {
+      "id": "match/redacted-matches-anything",
+      "kind": "match",
+      "level": "core",
+      "file": "cases/match/redacted-matches-anything.json"
+    },
+    {
+      "id": "match/template-no-placeholder-is-exact",
+      "kind": "template",
+      "level": "core",
+      "file": "cases/match/template-no-placeholder-is-exact.json"
+    },
+    {
+      "id": "match/template-anchored-both-ends",
+      "kind": "template",
+      "level": "core",
+      "file": "cases/match/template-anchored-both-ends.json"
+    },
+    {
+      "id": "match/template-leftmost-shortest",
+      "kind": "template",
+      "level": "core",
+      "file": "cases/match/template-leftmost-shortest.json"
+    },
+    {
+      "id": "match/template-typed-gap",
+      "kind": "template",
+      "level": "core",
+      "file": "cases/match/template-typed-gap.json"
+    },
+    {
+      "id": "match/template-adjacent-placeholders",
+      "kind": "template",
+      "level": "core",
+      "file": "cases/match/template-adjacent-placeholders.json"
+    },
+    {
+      "id": "match/regex-basic-class",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-basic-class.json"
+    },
+    {
+      "id": "match/regex-ascii-whitespace",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-ascii-whitespace.json"
+    },
+    {
+      "id": "match/regex-dot-excludes-only-lf",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-dot-excludes-only-lf.json"
+    },
+    {
+      "id": "match/regex-alternation-and-groups",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-alternation-and-groups.json"
+    },
+    {
+      "id": "match/regex-escaped-question-mark",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-escaped-question-mark.json"
+    },
+    {
+      "id": "match/regex-reject-non-capturing",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-non-capturing.json"
+    },
+    {
+      "id": "match/regex-reject-lookahead",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-lookahead.json"
+    },
+    {
+      "id": "match/regex-reject-backreference",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-backreference.json"
+    },
+    {
+      "id": "match/regex-reject-word-boundary",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-word-boundary.json"
+    },
+    {
+      "id": "match/regex-reject-lazy",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-lazy.json"
+    },
+    {
+      "id": "match/regex-reject-possessive",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-possessive.json"
+    },
+    {
+      "id": "match/regex-reject-negated-shorthand-in-class",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-negated-shorthand-in-class.json"
+    },
+    {
+      "id": "match/regex-reject-unicode-property",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-unicode-property.json"
+    },
+    {
+      "id": "match/regex-reject-unterminated-class",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-unterminated-class.json"
+    },
+    {
+      "id": "match/regex-reject-unclosed-group",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-unclosed-group.json"
+    },
+    {
+      "id": "match/regex-reject-trailing-backslash",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-trailing-backslash.json"
+    },
+    {
+      "id": "match/regex-reject-nothing-to-repeat",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-nothing-to-repeat.json"
+    },
+    {
+      "id": "select/document-order",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/document-order.json"
+    },
+    {
+      "id": "select/unlimited-replay",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/unlimited-replay.json"
+    },
+    {
+      "id": "select/explicit-times",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/explicit-times.json"
+    },
+    {
+      "id": "select/defaults-replay",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/defaults-replay.json"
+    },
+    {
+      "id": "select/first-match-wins",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/first-match-wins.json"
+    },
+    {
+      "id": "select/fault-then-success",
+      "kind": "select",
+      "level": "full",
+      "file": "cases/select/fault-then-success.json"
+    },
+    {
+      "id": "select/empty-fixture",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/empty-fixture.json"
+    },
+    {
+      "id": "select/defaults-match-applied",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/defaults-match-applied.json"
+    },
+    {
+      "id": "select/interaction-match-replaces-default",
+      "kind": "select",
+      "level": "core",
+      "file": "cases/select/interaction-match-replaces-default.json"
+    },
+    {
+      "id": "explain/unexpected-member",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/unexpected-member.json"
+    },
+    {
+      "id": "explain/missing-member",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/missing-member.json"
+    },
+    {
+      "id": "explain/no-single-fix",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/no-single-fix.json"
+    },
+    {
+      "id": "explain/deterministic-order",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/deterministic-order.json"
+    },
+    {
+      "id": "explain/depleted",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/depleted.json"
+    },
+    {
+      "id": "explain/empty-fixture",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/empty-fixture.json"
+    },
+    {
+      "id": "explain/query-suggestion",
+      "kind": "explain",
+      "level": "explain",
+      "file": "cases/explain/query-suggestion.json"
+    },
+    {
+      "id": "redact/default-rules",
+      "kind": "redact",
+      "level": "redact",
+      "file": "cases/redact/default-rules.json"
+    },
+    {
+      "id": "redact/idempotent",
+      "kind": "redact",
+      "level": "redact",
+      "file": "cases/redact/idempotent.json"
+    },
+    {
+      "id": "redact/case-insensitive-names",
+      "kind": "redact",
+      "level": "redact",
+      "file": "cases/redact/case-insensitive-names.json"
+    },
+    {
+      "id": "redact/custom-json-path",
+      "kind": "redact",
+      "level": "redact",
+      "file": "cases/redact/custom-json-path.json"
+    },
+    {
+      "id": "redact/nested-json-fields",
+      "kind": "redact",
+      "level": "redact",
+      "file": "cases/redact/nested-json-fields.json"
+    },
+    {
+      "id": "redact/non-default-query-untouched",
+      "kind": "redact",
+      "level": "redact",
+      "file": "cases/redact/non-default-query-untouched.json"
+    },
+    {
+      "id": "redact/entropy-high-entropy-token",
+      "kind": "entropy",
+      "level": "redact",
+      "file": "cases/redact/entropy-high-entropy-token.json"
+    },
+    {
+      "id": "redact/entropy-too-short",
+      "kind": "entropy",
+      "level": "redact",
+      "file": "cases/redact/entropy-too-short.json"
+    },
+    {
+      "id": "redact/entropy-all-letters",
+      "kind": "entropy",
+      "level": "redact",
+      "file": "cases/redact/entropy-all-letters.json"
+    },
+    {
+      "id": "redact/entropy-all-digits",
+      "kind": "entropy",
+      "level": "redact",
+      "file": "cases/redact/entropy-all-digits.json"
+    },
+    {
+      "id": "redact/entropy-low-entropy-repeated",
+      "kind": "entropy",
+      "level": "redact",
+      "file": "cases/redact/entropy-low-entropy-repeated.json"
+    },
+    {
+      "id": "redact/entropy-multiple-tokens",
+      "kind": "entropy",
+      "level": "redact",
+      "file": "cases/redact/entropy-multiple-tokens.json"
+    },
+    {
+      "id": "structural/missing-hif",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/missing-hif.json"
+    },
+    {
+      "id": "structural/missing-interactions",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/missing-interactions.json"
+    },
+    {
+      "id": "structural/interactions-not-array",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/interactions-not-array.json"
+    },
+    {
+      "id": "structural/version-not-string",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/version-not-string.json"
+    },
+    {
+      "id": "structural/version-malformed",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/version-malformed.json"
+    },
+    {
+      "id": "structural/version-major-mismatch",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/version-major-mismatch.json"
+    },
+    {
+      "id": "structural/no-response-or-fault",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/no-response-or-fault.json"
+    },
+    {
+      "id": "structural/both-response-and-fault",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/both-response-and-fault.json"
+    },
+    {
+      "id": "structural/partial-response-without-response",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/partial-response-without-response.json"
+    },
+    {
+      "id": "structural/duplicate-id",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/duplicate-id.json"
+    },
+    {
+      "id": "structural/invalid-id-characters",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/invalid-id-characters.json"
+    },
+    {
+      "id": "structural/status-out-of-range",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/status-out-of-range.json"
+    },
+    {
+      "id": "structural/missing-method",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/missing-method.json"
+    },
+    {
+      "id": "structural/relative-url",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/relative-url.json"
+    },
+    {
+      "id": "structural/unsupported-scheme",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/unsupported-scheme.json"
+    },
+    {
+      "id": "structural/invalid-base64",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/invalid-base64.json"
+    },
+    {
+      "id": "structural/base64-with-whitespace",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/base64-with-whitespace.json"
+    },
+    {
+      "id": "structural/unknown-body-encoding",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/unknown-body-encoding.json"
+    },
+    {
+      "id": "structural/body-missing-payload",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/body-missing-payload.json"
+    },
+    {
+      "id": "structural/unknown-fault-type",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/unknown-fault-type.json"
+    },
+    {
+      "id": "structural/invalid-match-mode",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/invalid-match-mode.json"
+    },
+    {
+      "id": "structural/invalid-replay-times",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/invalid-replay-times.json"
+    },
+    {
+      "id": "structural/invalid-json-path",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/invalid-json-path.json"
+    },
+    {
+      "id": "structural/regex-outside-subset",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/regex-outside-subset.json"
+    },
+    {
+      "id": "structural/header-entry-wrong-shape",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-entry-wrong-shape.json"
+    },
+    {
+      "id": "version/same-version",
+      "kind": "version",
+      "level": "core",
+      "file": "cases/version/same-version.json"
+    },
+    {
+      "id": "version/forward-minor",
+      "kind": "version",
+      "level": "core",
+      "file": "cases/version/forward-minor.json"
+    },
+    {
+      "id": "version/future-major-rejected",
+      "kind": "version",
+      "level": "core",
+      "file": "cases/version/future-major-rejected.json"
+    },
+    {
+      "id": "version/unknown-member-warns",
+      "kind": "version",
+      "level": "core",
+      "file": "cases/version/unknown-member-warns.json"
+    },
+    {
+      "id": "version/lowercase-method-warns",
+      "kind": "version",
+      "level": "core",
+      "file": "cases/version/lowercase-method-warns.json"
+    }
+  ]
+}

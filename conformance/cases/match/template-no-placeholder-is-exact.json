@@ -1,0 +1,19 @@
+{
+  "id": "match/template-no-placeholder-is-exact",
+  "kind": "template",
+  "level": "core",
+  "description": "A template with no placeholder is exact string equality.",
+  "recorded": "plain text",
+  "subjects": [
+    "plain text",
+    "plain text ",
+    "plain"
+  ],
+  "expected": {
+    "matches": [
+      true,
+      false,
+      false
+    ]
+  }
+}

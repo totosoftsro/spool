@@ -1,0 +1,38 @@
+{
+  "id": "redact/idempotent",
+  "kind": "redact",
+  "level": "redact",
+  "description": "Redacting an already-redacted fixture changes nothing. A recorder that re-redacts on load must not corrupt the placeholder.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/a",
+          "headers": [
+            [
+              "authorization",
+              "{{redacted}}"
+            ]
+          ]
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "config": {},
+  "expected": {
+    "rules": [
+      "headers"
+    ],
+    "requestHeaders": [
+      [
+        "authorization",
+        "{{redacted}}"
+      ]
+    ]
+  }
+}

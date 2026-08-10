@@ -1,0 +1,53 @@
+{
+  "id": "redact/custom-json-path",
+  "kind": "redact",
+  "level": "redact",
+  "description": "A jsonPaths rule redacts by location rather than by name.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/a",
+          "body": {
+            "encoding": "json",
+            "json": {
+              "users": [
+                {
+                  "ssn": "1"
+                },
+                {
+                  "ssn": "2"
+                }
+              ]
+            }
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "config": {
+    "jsonPaths": [
+      "/users/*/ssn"
+    ]
+  },
+  "expected": {
+    "rules": [
+      "jsonPaths"
+    ],
+    "requestBodyJson": {
+      "users": [
+        {
+          "ssn": "{{redacted}}"
+        },
+        {
+          "ssn": "{{redacted}}"
+        }
+      ]
+    }
+  }
+}

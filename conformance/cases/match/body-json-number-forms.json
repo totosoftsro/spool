@@ -1,0 +1,30 @@
+{
+  "id": "match/body-json-number-forms",
+  "kind": "match",
+  "level": "core",
+  "description": "Numbers compare by canonical form.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1.0
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "id": "normalize/query-empty-segments-dropped",
+  "kind": "query",
+  "level": "core",
+  "description": "Step 2: an empty segment produces no parameter.",
+  "query": "a=1&&b=2",
+  "expected": [
+    {
+      "name": "a",
+      "value": "1",
+      "valueless": false
+    },
+    {
+      "name": "b",
+      "value": "2",
+      "valueless": false
+    }
+  ]
+}

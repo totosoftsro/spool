@@ -1,0 +1,34 @@
+{
+  "id": "match/headers-ows-stripped",
+  "kind": "match",
+  "level": "core",
+  "description": "Leading and trailing OWS is stripped before comparison.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x",
+        "v"
+      ]
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x",
+        "  v  "
+      ]
+    ]
+  },
+  "config": {
+    "headers": {
+      "mode": "all"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

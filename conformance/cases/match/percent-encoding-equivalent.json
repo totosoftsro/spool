@@ -1,0 +1,18 @@
+{
+  "id": "match/percent-encoding-equivalent",
+  "kind": "match",
+  "level": "core",
+  "description": "Both sides normalize, so an encoded unreserved octet matches its decoded form.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a%7Eb"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a~b"
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "canonical/string-escapes",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Short escapes are used where JSON defines them.",
+  "value": {
+    "s": "a\"b\\c\nd\te"
+  },
+  "expected": "{\"s\":\"a\\\"b\\\\c\\nd\\te\"}"
+}

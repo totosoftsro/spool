@@ -1,0 +1,21 @@
+{
+  "id": "normalize/fragment-removed",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 8: the fragment is dropped.",
+  "url": "https://x.test/a?b=1#frag",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a",
+    "query": [
+      {
+        "name": "b",
+        "value": "1",
+        "valueless": false
+      }
+    ],
+    "href": "https://x.test/a?b=1"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "select/defaults-match-applied",
+  "kind": "select",
+  "level": "core",
+  "description": "defaults.match applies to every interaction that does not override it.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "a",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/a?v=1"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ],
+    "defaults": {
+      "match": {
+        "query": {
+          "mode": "ignore"
+        }
+      }
+    }
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/a?v=999"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "a"
+    ]
+  }
+}

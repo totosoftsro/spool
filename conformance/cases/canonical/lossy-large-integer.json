@@ -1,0 +1,13 @@
+{
+  "id": "canonical/lossy-large-integer",
+  "kind": "lossy",
+  "level": "core",
+  "description": "A 17-digit integer id does not survive an IEEE 754 round trip. This is the case that silently corrupts data.",
+  "text": "{\"id\": 10000000000000001}",
+  "expected": [
+    {
+      "literal": "10000000000000001",
+      "canonical": "10000000000000000"
+    }
+  ]
+}

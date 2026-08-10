@@ -1,0 +1,22 @@
+{
+  "id": "match/query-mode-ignore",
+  "kind": "match",
+  "level": "core",
+  "description": "Ignore mode skips the query entirely.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?z=9"
+  },
+  "config": {
+    "query": {
+      "mode": "ignore"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

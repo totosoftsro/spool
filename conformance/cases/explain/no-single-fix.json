@@ -1,0 +1,57 @@
+{
+  "id": "explain/no-single-fix",
+  "kind": "explain",
+  "level": "explain",
+  "description": "When no single change makes the closest candidate match, no suggestion may be emitted. Silence beats speculation.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "unrelated",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/other"
+        },
+        "response": {
+          "status": 200
+        }
+      },
+      {
+        "id": "create-user",
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/api/users",
+          "headers": [
+            [
+              "content-type",
+              "application/json"
+            ]
+          ],
+          "body": {
+            "encoding": "json",
+            "json": {
+              "email": "{{any:string}}",
+              "name": "John"
+            }
+          }
+        },
+        "response": {
+          "status": 201
+        }
+      }
+    ]
+  },
+  "live": {
+    "method": "PUT",
+    "url": "https://other.test/nowhere",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "totally": "different"
+      }
+    }
+  },
+  "expected": {
+    "suggestions": []
+  }
+}

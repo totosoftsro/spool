@@ -1,0 +1,21 @@
+{
+  "id": "select/empty-fixture",
+  "kind": "select",
+  "level": "core",
+  "description": "An empty fixture matches nothing and must not fall through to the network.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": []
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "<unmatched>"
+    ]
+  }
+}

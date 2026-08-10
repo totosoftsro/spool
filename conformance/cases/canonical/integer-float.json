@@ -1,0 +1,10 @@
+{
+  "id": "canonical/integer-float",
+  "kind": "canonical",
+  "level": "core",
+  "description": "1.0 and 1 are the same IEEE 754 double.",
+  "value": {
+    "x": 1.0
+  },
+  "expected": "{\"x\":1}"
+}

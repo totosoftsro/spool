@@ -1,0 +1,29 @@
+{
+  "id": "version/unknown-member-warns",
+  "kind": "version",
+  "level": "core",
+  "description": "An unknown member is ignored but reported, because the usual cause is a misspelled key in a match block that silently does nothing.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        },
+        "match": {
+          "quary": {
+            "mode": "ignore"
+          }
+        }
+      }
+    ]
+  },
+  "expected": {
+    "accepted": true,
+    "warns": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "normalize/uppercase-triplets",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 5: triplet hex digits are uppercased; %2F stays encoded (reserved).",
+  "url": "https://x.test/a%2fb",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a%2Fb",
+    "query": [],
+    "href": "https://x.test/a%2Fb"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "normalize/lowercase-scheme-host",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Steps 1-2: scheme and host lowercase; the path keeps its case.",
+  "url": "HTTPS://API.Example.COM/Path",
+  "expected": {
+    "scheme": "https",
+    "host": "api.example.com",
+    "port": null,
+    "path": "/Path",
+    "query": [],
+    "href": "https://api.example.com/Path"
+  }
+}

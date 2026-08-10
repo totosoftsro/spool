@@ -1,0 +1,38 @@
+{
+  "id": "match/body-json-ignore-nonexistent",
+  "kind": "match",
+  "level": "core",
+  "description": "A path that matches nothing is not an error.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1
+      }
+    }
+  },
+  "config": {
+    "body": {
+      "json": {
+        "ignore": [
+          "/absent"
+        ]
+      }
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "canonical/empty-containers",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Empty containers have no separators.",
+  "value": {
+    "a": {},
+    "b": []
+  },
+  "expected": "{\"a\":{},\"b\":[]}"
+}

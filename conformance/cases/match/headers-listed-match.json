@@ -1,0 +1,55 @@
+{
+  "id": "match/headers-listed-match",
+  "kind": "match",
+  "level": "core",
+  "description": "Listed mode compares only the named fields.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ],
+      [
+        "x-extra",
+        "1"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "config": {
+    "headers": {
+      "mode": "listed",
+      "include": [
+        "content-type"
+      ]
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

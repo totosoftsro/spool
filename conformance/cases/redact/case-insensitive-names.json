@@ -1,0 +1,50 @@
+{
+  "id": "redact/case-insensitive-names",
+  "kind": "redact",
+  "level": "redact",
+  "description": "Header and JSON member names match case-insensitively.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/a",
+          "headers": [
+            [
+              "Authorization",
+              "x"
+            ]
+          ],
+          "body": {
+            "encoding": "json",
+            "json": {
+              "Password": "p",
+              "API_KEY": "k"
+            }
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "config": {},
+  "expected": {
+    "rules": [
+      "headers",
+      "jsonFields"
+    ],
+    "requestHeaders": [
+      [
+        "authorization",
+        "{{redacted}}"
+      ]
+    ],
+    "requestBodyJson": {
+      "Password": "{{redacted}}",
+      "API_KEY": "{{redacted}}"
+    }
+  }
+}

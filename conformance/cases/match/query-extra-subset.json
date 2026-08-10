@@ -1,0 +1,22 @@
+{
+  "id": "match/query-extra-subset",
+  "kind": "match",
+  "level": "core",
+  "description": "Subset mode allows extras.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1&b=2"
+  },
+  "config": {
+    "query": {
+      "mode": "subset"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

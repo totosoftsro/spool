@@ -1,0 +1,10 @@
+{
+  "id": "canonical/negative-zero",
+  "kind": "canonical",
+  "level": "core",
+  "description": "RFC 8785: -0 serializes as 0.",
+  "value": {
+    "x": -0.0
+  },
+  "expected": "{\"x\":0}"
+}

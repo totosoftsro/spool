@@ -1,0 +1,48 @@
+{
+  "id": "match/headers-ignored-by-default",
+  "kind": "match",
+  "level": "core",
+  "description": "Headers default to mode none, so a client-added header cannot break a fixture.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ],
+      [
+        "user-agent",
+        "anything"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,79 @@
+name: Bug report
+description: Something behaves differently from what the specification says.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Most bugs in this project can be reproduced with a fixture and a request,
+        both of which are plain JSON. If you can paste those, you have almost
+        certainly given us enough.
+
+  - type: dropdown
+    id: implementation
+    attributes:
+      label: Implementation
+      options:
+        - "@spool/hif (TypeScript)"
+        - spool-hif (Python)
+        - Both
+        - The specification itself
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: fixture
+    attributes:
+      label: Fixture
+      description: The smallest fixture that reproduces it.
+      render: json
+    validations:
+      required: false
+
+  - type: textarea
+    id: request
+    attributes:
+      label: Request
+      description: 'The request being replayed, e.g. {"method":"GET","url":"https://..."}'
+      render: json
+    validations:
+      required: false
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: |
+        If it is a matching problem, the output of:
+        `spool explain fixture.hif.json request.json --all`
+      render: shell
+
+  - type: input
+    id: section
+    attributes:
+      label: Relevant specification section
+      description: If you know which rule is involved, e.g. §7.4.2. Leave blank if unsure.
+      placeholder: "§7.4.2"
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I ran `spool lint` on the fixture and it reported no errors.
+        - label: I checked whether the other implementation behaves the same way (a difference between them is especially useful to know).

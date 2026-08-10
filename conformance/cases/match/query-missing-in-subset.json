@@ -1,0 +1,22 @@
+{
+  "id": "match/query-missing-in-subset",
+  "kind": "match",
+  "level": "core",
+  "description": "Subset mode still requires every recorded parameter.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1&b=2"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1"
+  },
+  "config": {
+    "query": {
+      "mode": "subset"
+    }
+  },
+  "expected": {
+    "matches": false
+  }
+}

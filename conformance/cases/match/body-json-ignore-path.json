@@ -1,0 +1,40 @@
+{
+  "id": "match/body-json-ignore-path",
+  "kind": "match",
+  "level": "core",
+  "description": "json.ignore removes a path from both sides.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1,
+        "ts": "old"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1,
+        "ts": "new"
+      }
+    }
+  },
+  "config": {
+    "body": {
+      "json": {
+        "ignore": [
+          "/ts"
+        ]
+      }
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "name": "@spool/hif",
+  "version": "0.1.0",
+  "description": "Record and replay HTTP traffic using the portable HIF fixture format. Deterministic matching, explained mismatches, redaction on by default.",
+  "keywords": [
+    "http",
+    "testing",
+    "record",
+    "replay",
+    "fixture",
+    "mock",
+    "hif",
+    "vcr",
+    "cassette",
+    "integration-testing"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "bin": {
+    "spool": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./fetch": {
+      "types": "./dist/adapters/fetch.d.ts",
+      "import": "./dist/adapters/fetch.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "conformance": "vitest run test/conformance.test.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spool-hif/spool.git",
+    "directory": "implementations/typescript"
+  },
+  "homepage": "https://github.com/spool-hif/spool#readme",
+  "bugs": "https://github.com/spool-hif/spool/issues"
+}

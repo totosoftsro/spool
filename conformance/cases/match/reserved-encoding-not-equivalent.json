@@ -1,0 +1,18 @@
+{
+  "id": "match/reserved-encoding-not-equivalent",
+  "kind": "match",
+  "level": "core",
+  "description": "%2F is reserved and must not be decoded; an encoded slash is not a path separator.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a%2Fb"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a/b"
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

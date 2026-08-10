@@ -1,0 +1,18 @@
+{
+  "id": "match/query-reordered",
+  "kind": "match",
+  "level": "core",
+  "description": "Query comparison is over multisets, so order does not matter.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a?b=2&a=1"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a?a=1&b=2"
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

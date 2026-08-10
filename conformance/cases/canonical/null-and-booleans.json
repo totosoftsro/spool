@@ -1,0 +1,12 @@
+{
+  "id": "canonical/null-and-booleans",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Literals are written as-is.",
+  "value": {
+    "a": null,
+    "b": true,
+    "c": false
+  },
+  "expected": "{\"a\":null,\"b\":true,\"c\":false}"
+}

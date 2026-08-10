@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-unclosed-group",
+  "kind": "regex",
+  "level": "core",
+  "description": "Malformed patterns are rejected.",
+  "pattern": "(a",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

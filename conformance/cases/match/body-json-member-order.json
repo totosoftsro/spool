@@ -1,0 +1,44 @@
+{
+  "id": "match/body-json-member-order",
+  "kind": "match",
+  "level": "core",
+  "description": "JSON objects compare order-insensitively.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "email": "ada@example.com",
+        "name": "Ada"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

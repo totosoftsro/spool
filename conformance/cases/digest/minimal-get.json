@@ -1,0 +1,12 @@
+{
+  "id": "digest/minimal-get",
+  "kind": "digest",
+  "level": "core",
+  "description": "The simplest possible pre-image. Member names are single letters so RFC 8785 sorts them b, h, m, u.",
+  "request": {
+    "method": "GET",
+    "url": "https://x.test/"
+  },
+  "preimage": "{\"b\":null,\"h\":[],\"m\":\"GET\",\"u\":\"https://x.test/\"}",
+  "digest": "17ff2b4107ca6021410afa60043354650b3bb2a3f2e23cf8a244c78807b0b575"
+}

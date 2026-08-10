@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-unterminated-class",
+  "kind": "regex",
+  "level": "core",
+  "description": "Malformed patterns are rejected, not passed through.",
+  "pattern": "[abc",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

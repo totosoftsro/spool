@@ -1,0 +1,27 @@
+{
+  "id": "version/forward-minor",
+  "kind": "version",
+  "level": "core",
+  "description": "A newer minor version is accepted with a warning; unknown members are ignored. This is what lets the format grow without a flag day.",
+  "document": {
+    "hif": "1.7",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        },
+        "somethingFrom17": {
+          "a": 1
+        }
+      }
+    ]
+  },
+  "expected": {
+    "accepted": true,
+    "warns": true
+  }
+}

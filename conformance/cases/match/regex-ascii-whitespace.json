@@ -1,0 +1,20 @@
+{
+  "id": "match/regex-ascii-whitespace",
+  "kind": "regex",
+  "level": "core",
+  "description": "\\s is ASCII-only, unlike JavaScript's Unicode \\s.",
+  "pattern": "a\\sb",
+  "subjects": [
+    "a b",
+    "a\tb",
+    "a b"
+  ],
+  "expected": {
+    "valid": true,
+    "matches": [
+      true,
+      true,
+      false
+    ]
+  }
+}

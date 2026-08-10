@@ -1,0 +1,17 @@
+{
+  "id": "redact/entropy-high-entropy-token",
+  "kind": "entropy",
+  "level": "redact",
+  "description": "A mixed-case alphanumeric token of 24 characters above the entropy floor.",
+  "subject": "Bearer aB3xY9zQ7mN2pL5kR8sT4vW6",
+  "config": {
+    "minLength": 24,
+    "maxLength": 512,
+    "minBits": 3.5
+  },
+  "expected": {
+    "tokens": [
+      "aB3xY9zQ7mN2pL5kR8sT4vW6"
+    ]
+  }
+}

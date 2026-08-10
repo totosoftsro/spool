@@ -1,0 +1,14 @@
+{
+  "id": "version/same-version",
+  "kind": "version",
+  "level": "core",
+  "description": "The exact supported version is accepted silently.",
+  "document": {
+    "hif": "1.0",
+    "interactions": []
+  },
+  "expected": {
+    "accepted": true,
+    "warns": false
+  }
+}

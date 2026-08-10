@@ -1,0 +1,27 @@
+{
+  "id": "structural/both-response-and-fault",
+  "kind": "structural",
+  "level": "core",
+  "description": "Only partial-response permits both.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        },
+        "fault": {
+          "type": "timeout"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "partial-response"
+  }
+}

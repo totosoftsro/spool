@@ -1,0 +1,10 @@
+{
+  "id": "canonical/exponent-just-below",
+  "kind": "canonical",
+  "level": "core",
+  "description": "1e20 is still written in full by ECMAScript Number::toString.",
+  "value": {
+    "x": 1e+20
+  },
+  "expected": "{\"x\":100000000000000000000}"
+}

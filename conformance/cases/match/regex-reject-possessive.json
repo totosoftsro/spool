@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-possessive",
+  "kind": "regex",
+  "level": "core",
+  "description": "Possessive quantifiers are excluded.",
+  "pattern": "a++",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

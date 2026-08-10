@@ -1,0 +1,29 @@
+{
+  "id": "structural/header-entry-wrong-shape",
+  "kind": "structural",
+  "level": "core",
+  "description": "A header entry needs two or three elements.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/",
+          "headers": [
+            [
+              "only-one"
+            ]
+          ]
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "Header"
+  }
+}

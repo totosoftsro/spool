@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-negated-shorthand-in-class",
+  "kind": "regex",
+  "level": "core",
+  "description": "A negated shorthand inside a class has no unambiguous expansion.",
+  "pattern": "[\\D]",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

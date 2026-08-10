@@ -1,0 +1,15 @@
+{
+  "id": "normalize/dot-segments-rfc3986",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 7: the worked example from RFC 3986 section 5.2.4.",
+  "url": "https://x.test/a/b/c/./../../g",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a/g",
+    "query": [],
+    "href": "https://x.test/a/g"
+  }
+}

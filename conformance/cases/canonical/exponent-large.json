@@ -1,0 +1,10 @@
+{
+  "id": "canonical/exponent-large",
+  "kind": "canonical",
+  "level": "core",
+  "description": "ECMAScript switches to exponential notation at 1e21.",
+  "value": {
+    "x": 1e+21
+  },
+  "expected": "{\"x\":1e+21}"
+}

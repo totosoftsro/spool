@@ -1,0 +1,29 @@
+{
+  "id": "structural/invalid-match-mode",
+  "kind": "structural",
+  "level": "core",
+  "description": "Match modes are a closed set.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        },
+        "match": {
+          "query": {
+            "mode": "fuzzy"
+          }
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "exact"
+  }
+}

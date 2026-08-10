@@ -1,0 +1,19 @@
+{
+  "id": "normalize/query-repetition-preserved",
+  "kind": "query",
+  "level": "core",
+  "description": "Repetition is significant and must be preserved.",
+  "query": "a=1&a=1",
+  "expected": [
+    {
+      "name": "a",
+      "value": "1",
+      "valueless": false
+    },
+    {
+      "name": "a",
+      "value": "1",
+      "valueless": false
+    }
+  ]
+}

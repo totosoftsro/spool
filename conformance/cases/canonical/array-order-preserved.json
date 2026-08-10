@@ -1,0 +1,12 @@
+{
+  "id": "canonical/array-order-preserved",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Arrays are ordered; canonicalization must not sort them.",
+  "value": [
+    3,
+    1,
+    2
+  ],
+  "expected": "[3,1,2]"
+}

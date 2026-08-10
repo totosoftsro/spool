@@ -1,0 +1,24 @@
+{
+  "id": "structural/relative-url",
+  "kind": "structural",
+  "level": "core",
+  "description": "URLs must be absolute.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "/relative"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "URL"
+  }
+}

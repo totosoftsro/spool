@@ -1,0 +1,55 @@
+{
+  "id": "select/unlimited-replay",
+  "kind": "select",
+  "level": "core",
+  "description": "An interaction with times: unlimited never depletes.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "once",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 500
+        }
+      },
+      {
+        "id": "forever",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 200
+        },
+        "replay": {
+          "times": "unlimited"
+        }
+      }
+    ]
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "once",
+      "forever",
+      "forever"
+    ]
+  }
+}

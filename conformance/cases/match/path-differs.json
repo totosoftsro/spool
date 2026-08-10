@@ -1,0 +1,18 @@
+{
+  "id": "match/path-differs",
+  "kind": "match",
+  "level": "core",
+  "description": "Path is compared by default.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/v1/users"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/v1/other"
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

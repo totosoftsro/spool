@@ -1,0 +1,30 @@
+{
+  "id": "match/placeholder-partial-string-is-literal",
+  "kind": "match",
+  "level": "core",
+  "description": "In a JSON string, a placeholder is only recognised when it is the entire string.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "id is {{any}}"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "id is 7"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

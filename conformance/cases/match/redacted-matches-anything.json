@@ -1,0 +1,34 @@
+{
+  "id": "match/redacted-matches-anything",
+  "kind": "match",
+  "level": "core",
+  "description": "A redacted value matches anything, so redaction does not break replay of its own request.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "authorization",
+        "{{redacted}}"
+      ]
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "authorization",
+        "Bearer real-token"
+      ]
+    ]
+  },
+  "config": {
+    "headers": {
+      "mode": "all"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

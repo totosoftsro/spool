@@ -1,0 +1,26 @@
+{
+  "id": "match/body-text-exact",
+  "kind": "match",
+  "level": "core",
+  "description": "Auto mode uses exact for a text body.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "text",
+      "text": "hello"
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "text",
+      "text": "hello"
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

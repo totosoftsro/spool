@@ -1,0 +1,18 @@
+{
+  "id": "match/scheme-differs",
+  "kind": "match",
+  "level": "core",
+  "description": "Scheme is compared by default.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/v1/users"
+  },
+  "live": {
+    "method": "GET",
+    "url": "http://api.test/v1/users"
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

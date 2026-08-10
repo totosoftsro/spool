@@ -1,0 +1,19 @@
+{
+  "id": "explain/empty-fixture",
+  "kind": "explain",
+  "level": "explain",
+  "description": "An empty fixture yields zero candidates and must say so.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": []
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a"
+  },
+  "expected": {
+    "empty": true,
+    "candidateOrder": [],
+    "suggestions": []
+  }
+}

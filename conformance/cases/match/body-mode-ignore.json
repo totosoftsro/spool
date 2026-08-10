@@ -1,0 +1,30 @@
+{
+  "id": "match/body-mode-ignore",
+  "kind": "match",
+  "level": "core",
+  "description": "Ignore mode skips the body.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "text",
+      "text": "hello"
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "text",
+      "text": "different"
+    }
+  },
+  "config": {
+    "body": {
+      "mode": "ignore"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

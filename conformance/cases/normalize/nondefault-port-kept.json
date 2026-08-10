@@ -1,0 +1,15 @@
+{
+  "id": "normalize/nondefault-port-kept",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 3: any other port is retained.",
+  "url": "https://x.test:8443/a",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": 8443,
+    "path": "/a",
+    "query": [],
+    "href": "https://x.test:8443/a"
+  }
+}

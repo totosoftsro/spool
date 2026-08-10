@@ -1,0 +1,16 @@
+{
+  "id": "digest/text-body",
+  "kind": "digest",
+  "level": "core",
+  "description": "A text body is embedded as a string.",
+  "request": {
+    "method": "POST",
+    "url": "https://x.test/a",
+    "body": {
+      "encoding": "text",
+      "text": "hello"
+    }
+  },
+  "preimage": "{\"b\":\"hello\",\"h\":[],\"m\":\"POST\",\"u\":\"https://x.test/a\"}",
+  "digest": "020d2d00bc2bf85eb384e8840966a42ac0d7469f6079924057adb32593eb8147"
+}

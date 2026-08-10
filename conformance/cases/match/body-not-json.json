@@ -1,0 +1,41 @@
+{
+  "id": "match/body-not-json",
+  "kind": "match",
+  "level": "core",
+  "description": "A live body that does not parse fails json-mode matching.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "text",
+      "text": "not json"
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

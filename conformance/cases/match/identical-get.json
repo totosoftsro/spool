@@ -1,0 +1,18 @@
+{
+  "id": "match/identical-get",
+  "kind": "match",
+  "level": "core",
+  "description": "An identical request matches under the defaults.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/v1/users"
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/v1/users"
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

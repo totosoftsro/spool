@@ -1,0 +1,15 @@
+{
+  "id": "normalize/default-port-https",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 3: the scheme default port is removed.",
+  "url": "https://x.test:443/a",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/a",
+    "query": [],
+    "href": "https://x.test/a"
+  }
+}

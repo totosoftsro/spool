@@ -1,0 +1,19 @@
+{
+  "id": "digest/json-body",
+  "kind": "digest",
+  "level": "core",
+  "description": "A json body is embedded as a value and canonicalized, so member order does not matter.",
+  "request": {
+    "method": "POST",
+    "url": "https://x.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "b": 2,
+        "a": 1
+      }
+    }
+  },
+  "preimage": "{\"b\":{\"a\":1,\"b\":2},\"h\":[],\"m\":\"POST\",\"u\":\"https://x.test/a\"}",
+  "digest": "38485d8e1000cd89ff25344cfa1ac218762e2e3e87a109e5ad0e92f4a278dfaa"
+}

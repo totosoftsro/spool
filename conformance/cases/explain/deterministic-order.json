@@ -1,0 +1,41 @@
+{
+  "id": "explain/deterministic-order",
+  "kind": "explain",
+  "level": "explain",
+  "description": "Candidates order by score desc, then total desc, then index asc. The tie-break by index is what keeps the report independent of hash iteration order.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "b-first-in-doc",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/x"
+        },
+        "response": {
+          "status": 200
+        }
+      },
+      {
+        "id": "a-second-in-doc",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/y"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/z"
+  },
+  "expected": {
+    "candidateOrder": [
+      "b-first-in-doc",
+      "a-second-in-doc"
+    ]
+  }
+}

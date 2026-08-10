@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-non-capturing",
+  "kind": "regex",
+  "level": "core",
+  "description": "Non-capturing groups are excluded.",
+  "pattern": "(?:a)",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

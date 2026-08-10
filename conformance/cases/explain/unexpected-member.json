@@ -1,0 +1,82 @@
+{
+  "id": "explain/unexpected-member",
+  "kind": "explain",
+  "level": "explain",
+  "description": "The canonical example: everything matches except one unexpected body member. The report must name the path and suggest a verified fix.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "unrelated",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/other"
+        },
+        "response": {
+          "status": 200
+        }
+      },
+      {
+        "id": "create-user",
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/api/users",
+          "headers": [
+            [
+              "content-type",
+              "application/json"
+            ]
+          ],
+          "body": {
+            "encoding": "json",
+            "json": {
+              "email": "{{any:string}}",
+              "name": "John"
+            }
+          }
+        },
+        "response": {
+          "status": 201
+        }
+      }
+    ]
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/api/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "email": "john@example.com",
+        "name": "John",
+        "role": "admin"
+      }
+    }
+  },
+  "expected": {
+    "candidateOrder": [
+      "create-user",
+      "unrelated"
+    ],
+    "topScore": 6,
+    "topTotal": 7,
+    "reasons": [
+      "json.unexpected-member"
+    ],
+    "paths": [
+      "/role"
+    ],
+    "suggestions": [
+      {
+        "target": "interactions[1].match.body.json.extra",
+        "value": "allow"
+      }
+    ]
+  }
+}

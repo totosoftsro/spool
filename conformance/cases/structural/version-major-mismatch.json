@@ -1,0 +1,14 @@
+{
+  "id": "structural/version-major-mismatch",
+  "kind": "structural",
+  "level": "core",
+  "description": "A differing major version must be rejected, not partially interpreted.",
+  "document": {
+    "hif": "2.0",
+    "interactions": []
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "2.0"
+  }
+}

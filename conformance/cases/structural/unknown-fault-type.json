@@ -1,0 +1,24 @@
+{
+  "id": "structural/unknown-fault-type",
+  "kind": "structural",
+  "level": "core",
+  "description": "Fault types are a closed set.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "fault": {
+          "type": "meteor-strike"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "fault type"
+  }
+}

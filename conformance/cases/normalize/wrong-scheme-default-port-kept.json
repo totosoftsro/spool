@@ -1,0 +1,15 @@
+{
+  "id": "normalize/wrong-scheme-default-port-kept",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 3 is per-scheme: 443 is not the http default.",
+  "url": "http://x.test:443/a",
+  "expected": {
+    "scheme": "http",
+    "host": "x.test",
+    "port": 443,
+    "path": "/a",
+    "query": [],
+    "href": "http://x.test:443/a"
+  }
+}

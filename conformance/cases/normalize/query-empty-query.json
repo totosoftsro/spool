@@ -1,0 +1,8 @@
+{
+  "id": "normalize/query-empty-query",
+  "kind": "query",
+  "level": "core",
+  "description": "An absent query yields an empty parameter list.",
+  "query": "",
+  "expected": []
+}

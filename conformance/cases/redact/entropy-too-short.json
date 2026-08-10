@@ -1,0 +1,15 @@
+{
+  "id": "redact/entropy-too-short",
+  "kind": "entropy",
+  "level": "redact",
+  "description": "Tokens shorter than minLength are discarded (step 2).",
+  "subject": "abc123",
+  "config": {
+    "minLength": 24,
+    "maxLength": 512,
+    "minBits": 3.5
+  },
+  "expected": {
+    "tokens": []
+  }
+}

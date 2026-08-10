@@ -1,0 +1,29 @@
+{
+  "id": "redact/non-default-query-untouched",
+  "kind": "redact",
+  "level": "redact",
+  "description": "A query parameter not on the default list is left alone.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/a?page=2&sort=name"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "config": {},
+  "expected": {
+    "rules": [],
+    "requestUrlContains": [
+      "page=2",
+      "sort=name"
+    ],
+    "metaApplied": false
+  }
+}

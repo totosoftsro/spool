@@ -1,0 +1,25 @@
+{
+  "id": "structural/invalid-id-characters",
+  "kind": "structural",
+  "level": "core",
+  "description": "Ids must match the documented pattern.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "has spaces",
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "id"
+  }
+}

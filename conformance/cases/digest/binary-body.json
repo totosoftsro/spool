@@ -1,0 +1,16 @@
+{
+  "id": "digest/binary-body",
+  "kind": "digest",
+  "level": "core",
+  "description": "A binary body is embedded as {base64}. 3q2+7w== is 0xDEADBEEF.",
+  "request": {
+    "method": "POST",
+    "url": "https://x.test/a",
+    "body": {
+      "encoding": "base64",
+      "base64": "3q2+7w=="
+    }
+  },
+  "preimage": "{\"b\":{\"base64\":\"3q2+7w==\"},\"h\":[],\"m\":\"POST\",\"u\":\"https://x.test/a\"}",
+  "digest": "225c555c993dffc81c0510910207b29050b1e195dbc6b79acca9e90a9879f98c"
+}

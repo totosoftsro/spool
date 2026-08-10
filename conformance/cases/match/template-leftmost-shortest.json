@@ -1,0 +1,17 @@
+{
+  "id": "match/template-leftmost-shortest",
+  "kind": "template",
+  "level": "core",
+  "description": "Each gap is resolved leftmost-shortest in one left-to-right scan.",
+  "recorded": "a{{any}}b{{any}}c",
+  "subjects": [
+    "aXbYc",
+    "abc"
+  ],
+  "expected": {
+    "matches": [
+      true,
+      true
+    ]
+  }
+}

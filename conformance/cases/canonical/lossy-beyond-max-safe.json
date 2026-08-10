@@ -1,0 +1,13 @@
+{
+  "id": "canonical/lossy-beyond-max-safe",
+  "kind": "lossy",
+  "level": "core",
+  "description": "2^53+1 is the smallest integer that is not exactly representable.",
+  "text": "{\"a\": 9007199254740993}",
+  "expected": [
+    {
+      "literal": "9007199254740993",
+      "canonical": "9007199254740992"
+    }
+  ]
+}

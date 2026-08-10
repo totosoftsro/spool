@@ -1,0 +1,30 @@
+{
+  "id": "match/placeholder-iso8601-shape-only",
+  "kind": "match",
+  "level": "core",
+  "description": "ISO 8601 validation is shape-only; February 31st is accepted deliberately.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "t": "{{any:iso8601}}"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "t": "2026-02-31T00:00:00Z"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

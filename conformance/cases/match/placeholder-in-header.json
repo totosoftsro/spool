@@ -1,0 +1,34 @@
+{
+  "id": "match/placeholder-in-header",
+  "kind": "match",
+  "level": "core",
+  "description": "A placeholder works in a recorded header value.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x-nonce",
+        "{{any}}"
+      ]
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x-nonce",
+        "whatever"
+      ]
+    ]
+  },
+  "config": {
+    "headers": {
+      "mode": "all"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

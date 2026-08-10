@@ -1,0 +1,38 @@
+{
+  "id": "explain/depleted",
+  "kind": "explain",
+  "level": "explain",
+  "description": "A candidate that matches but has no plays left is reported as depleted, not as an ordinary mismatch, and gets no suggestion because no config change fixes it.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "once",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/a"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "plays": {
+    "0": 1
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a"
+  },
+  "expected": {
+    "candidateOrder": [
+      "once"
+    ],
+    "depleted": true,
+    "reasons": [
+      "depleted"
+    ],
+    "suggestions": []
+  }
+}

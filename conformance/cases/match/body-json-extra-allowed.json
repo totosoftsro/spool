@@ -1,0 +1,51 @@
+{
+  "id": "match/body-json-extra-allowed",
+  "kind": "match",
+  "level": "core",
+  "description": "extra: allow ignores unexpected members.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/v1/users",
+    "headers": [
+      [
+        "content-type",
+        "application/json"
+      ]
+    ],
+    "body": {
+      "encoding": "json",
+      "json": {
+        "name": "Ada",
+        "email": "ada@example.com",
+        "role": "admin"
+      }
+    }
+  },
+  "config": {
+    "body": {
+      "json": {
+        "extra": "allow"
+      }
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "digest/query-sorted",
+  "kind": "digest",
+  "level": "core",
+  "description": "The digest sorts query parameters even though matching does not.",
+  "request": {
+    "method": "GET",
+    "url": "https://x.test/a?y=2&x=1"
+  },
+  "preimage": "{\"b\":null,\"h\":[],\"m\":\"GET\",\"u\":\"https://x.test/a?x=1&y=2\"}",
+  "digest": "6ac3129ef93040972bdcca8df8a9197e1b1415cfe693b48766e6321e2acdccfe"
+}

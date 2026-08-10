@@ -1,0 +1,14 @@
+{
+  "id": "structural/interactions-not-array",
+  "kind": "structural",
+  "level": "core",
+  "description": "interactions must be an array.",
+  "document": {
+    "hif": "1.0",
+    "interactions": {}
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "interactions"
+  }
+}

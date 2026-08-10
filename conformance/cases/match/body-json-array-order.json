@@ -1,0 +1,36 @@
+{
+  "id": "match/body-json-array-order",
+  "kind": "match",
+  "level": "core",
+  "description": "Arrays are order-sensitive.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "xs": [
+          1,
+          2
+        ]
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "xs": [
+          2,
+          1
+        ]
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "match/headers-case-insensitive-name",
+  "kind": "match",
+  "level": "core",
+  "description": "Field names compare case-insensitively.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x-token",
+        "1"
+      ]
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "X-Token",
+        "1"
+      ]
+    ]
+  },
+  "config": {
+    "headers": {
+      "mode": "all"
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

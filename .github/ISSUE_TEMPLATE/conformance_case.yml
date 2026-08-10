@@ -1,0 +1,62 @@
+name: Conformance case
+description: Propose a test case for the shared suite. The most valuable contribution here.
+labels: ["conformance", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A conformance case that makes the two implementations disagree is worth
+        more than a feature. It means either one has a bug, or the specification
+        is ambiguous — and both are worth finding.
+
+        You do not need to write code. A case is a small JSON file plus a line in
+        `conformance/manifest.json`. See `conformance/README.md`.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Case kind
+      options:
+        - normalize
+        - query
+        - canonical
+        - lossy
+        - digest
+        - match
+        - template
+        - regex
+        - select
+        - explain
+        - redact
+        - entropy
+        - structural
+        - version
+        - "something the existing kinds do not cover"
+    validations:
+      required: true
+
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: What behaviour should be pinned down
+      description: What should happen, and which part of the specification says so.
+    validations:
+      required: true
+
+  - type: textarea
+    id: case
+    attributes:
+      label: Draft case
+      description: The JSON, if you have it. Rough is fine.
+      render: json
+
+  - type: dropdown
+    id: divergence
+    attributes:
+      label: Do the implementations currently disagree?
+      options:
+        - "I have not checked"
+        - "No — this pins down behaviour that is already correct"
+        - "Yes — they give different answers"
+    validations:
+      required: true

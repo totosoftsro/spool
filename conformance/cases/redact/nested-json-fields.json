@@ -1,0 +1,45 @@
+{
+  "id": "redact/nested-json-fields",
+  "kind": "redact",
+  "level": "redact",
+  "description": "Field-name rules apply at any depth.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "POST",
+          "url": "https://api.test/a",
+          "body": {
+            "encoding": "json",
+            "json": {
+              "a": {
+                "b": {
+                  "token": "t",
+                  "safe": 1
+                }
+              }
+            }
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "config": {},
+  "expected": {
+    "rules": [
+      "jsonFields"
+    ],
+    "requestBodyJson": {
+      "a": {
+        "b": {
+          "token": "{{redacted}}",
+          "safe": 1
+        }
+      }
+    }
+  }
+}

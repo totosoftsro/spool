@@ -1,0 +1,33 @@
+{
+  "id": "structural/invalid-json-path",
+  "kind": "structural",
+  "level": "core",
+  "description": "A JSON path must start with a slash.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/"
+        },
+        "response": {
+          "status": 200
+        },
+        "match": {
+          "body": {
+            "json": {
+              "ignore": [
+                "no-leading-slash"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "/"
+  }
+}

@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typescript:
+    name: TypeScript (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['18', '20', '22']
+    defaults:
+      run:
+        working-directory: implementations/typescript
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: implementations/typescript/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  python:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.9', '3.10', '3.11', '3.12', '3.13']
+    defaults:
+      run:
+        working-directory: implementations/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e '.[dev]'
+      - run: ruff check src tests
+      - run: mypy
+      - run: pytest -q
+
+  conformance:
+    name: Conformance and cross-implementation parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: implementations/typescript/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Verify test vectors independently
+        # Re-derives every digest and base64 vector with openssl. This job must
+        # run before the implementations do, so a vector that was "fixed" by
+        # pasting in an implementation's own output fails here rather than
+        # passing everywhere.
+        run: ./conformance/verify-vectors.sh
+
+      - name: Build TypeScript
+        working-directory: implementations/typescript
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install Python
+        working-directory: implementations/python
+        run: pip install -e '.[dev]'
+
+      - name: Conformance suite (TypeScript)
+        working-directory: implementations/typescript
+        run: npm run conformance
+
+      - name: Conformance suite (Python)
+        working-directory: implementations/python
+        run: pytest tests/test_conformance.py -q
+
+      - name: Cross-implementation parity
+        # Both implementations passing the spec is not the same as the two
+        # agreeing with each other on everything the spec leaves open, notably
+        # the rendered mismatch report.
+        run: ./conformance/cross-check.sh
+
+  examples:
+    name: Examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build and install both implementations
+        run: |
+          (cd implementations/typescript && npm ci && npm run build)
+          pip install -e 'implementations/python[dev]'
+
+      - name: Lint every example fixture
+        # Every fixture in the repository must be valid and warning-free. A
+        # broken example is worse than no example.
+        run: node implementations/typescript/dist/cli.js lint $(find examples -name '*.hif.json')
+
+      - name: TypeScript example (Vitest)
+        working-directory: examples/typescript-vitest
+        run: |
+          npm install
+          npm test
+
+      - name: Python example (pytest)
+        working-directory: examples/python-pytest
+        run: PYTHONPATH=../../implementations/python/src pytest tests -q
+
+      - name: Cross-language example
+        run: ./examples/cross-language/run.sh
+
+  spec-links:
+    name: Specification cross-references
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check that every referenced spec section exists
+        # Code comments and docs cite the spec by section number. A citation
+        # that points at a section which no longer exists is a silent
+        # documentation bug, so it is checked mechanically.
+        run: python3 tests/check_spec_references.py

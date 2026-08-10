@@ -1,0 +1,30 @@
+{
+  "id": "match/placeholder-escaped-literal",
+  "kind": "match",
+  "level": "core",
+  "description": "A leading backslash escapes a placeholder into a literal.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "\\{{any}}"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "{{any}}"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

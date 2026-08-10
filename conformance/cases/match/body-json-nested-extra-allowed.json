@@ -1,0 +1,41 @@
+{
+  "id": "match/body-json-nested-extra-allowed",
+  "kind": "match",
+  "level": "core",
+  "description": "extra: allow applies recursively at every depth.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "u": {
+          "n": 1
+        }
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "u": {
+          "n": 1,
+          "x": 2
+        }
+      }
+    }
+  },
+  "config": {
+    "body": {
+      "json": {
+        "extra": "allow"
+      }
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-lazy",
+  "kind": "regex",
+  "level": "core",
+  "description": "Lazy quantifiers are excluded.",
+  "pattern": "a*?",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "match/template-typed-gap",
+  "kind": "template",
+  "level": "core",
+  "description": "The gap contents must still satisfy the placeholder.",
+  "recorded": "n={{any:number}};",
+  "subjects": [
+    "n=42;",
+    "n=abc;"
+  ],
+  "expected": {
+    "matches": [
+      true,
+      false
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "normalize/idn-to-alabel",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 2: an internationalized host is stored in A-label form.",
+  "url": "https://xn--bcher-kva.test/a",
+  "expected": {
+    "scheme": "https",
+    "host": "xn--bcher-kva.test",
+    "port": null,
+    "path": "/a",
+    "query": [],
+    "href": "https://xn--bcher-kva.test/a"
+  }
+}

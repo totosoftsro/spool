@@ -1,0 +1,47 @@
+{
+  "id": "select/defaults-replay",
+  "kind": "select",
+  "level": "core",
+  "description": "defaults.replay applies to interactions that do not override it.",
+  "fixture": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "id": "a",
+        "request": {
+          "method": "GET",
+          "url": "https://api.test/job"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ],
+    "defaults": {
+      "replay": {
+        "times": 2
+      }
+    }
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.test/job"
+    }
+  ],
+  "expected": {
+    "selected": [
+      "a",
+      "a",
+      "<unmatched>"
+    ]
+  }
+}

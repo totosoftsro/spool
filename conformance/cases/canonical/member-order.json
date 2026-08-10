@@ -1,0 +1,12 @@
+{
+  "id": "canonical/member-order",
+  "kind": "canonical",
+  "level": "core",
+  "description": "Members sort by UTF-16 code unit, so uppercase precedes lowercase.",
+  "value": {
+    "b": 1,
+    "a": 2,
+    "A": 3
+  },
+  "expected": "{\"A\":3,\"a\":2,\"b\":1}"
+}

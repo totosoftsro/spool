@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/spool-hif/spool/security/advisories/new
+    about: Report privately. Do not open a public issue. See SECURITY.md for what is in scope.
+  - name: Question or idea
+    url: https://github.com/spool-hif/spool/discussions
+    about: For anything that is not a bug report or a concrete proposal.

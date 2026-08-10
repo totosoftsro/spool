@@ -1,0 +1,20 @@
+{
+  "id": "match/regex-basic-class",
+  "kind": "regex",
+  "level": "core",
+  "description": "Anchored, case-sensitive, exact counted quantifier.",
+  "pattern": "[a-z]+[0-9]{2}",
+  "subjects": [
+    "abc12",
+    "ABC12",
+    "abc123"
+  ],
+  "expected": {
+    "valid": true,
+    "matches": [
+      true,
+      false,
+      false
+    ]
+  }
+}

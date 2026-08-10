@@ -1,0 +1,8 @@
+{
+  "id": "canonical/lossy-string-contents-ignored",
+  "kind": "lossy",
+  "level": "core",
+  "description": "Numbers inside string literals are not numbers.",
+  "text": "{\"id\": \"10000000000000001\"}",
+  "expected": []
+}

@@ -1,0 +1,45 @@
+{
+  "id": "match/headers-ignore-in-all-mode",
+  "kind": "match",
+  "level": "core",
+  "description": "Ignored names are excluded in all mode.",
+  "recorded": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x",
+        "1"
+      ],
+      [
+        "date",
+        "then"
+      ]
+    ]
+  },
+  "live": {
+    "method": "GET",
+    "url": "https://api.test/a",
+    "headers": [
+      [
+        "x",
+        "1"
+      ],
+      [
+        "date",
+        "now"
+      ]
+    ]
+  },
+  "config": {
+    "headers": {
+      "mode": "all",
+      "ignore": [
+        "date"
+      ]
+    }
+  },
+  "expected": {
+    "matches": true
+  }
+}

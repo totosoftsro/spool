@@ -1,0 +1,14 @@
+{
+  "id": "normalize/query-utf8-percent-decoded",
+  "kind": "query",
+  "level": "core",
+  "description": "Step 5: decoded bytes are interpreted as UTF-8.",
+  "query": "n=%C3%A9",
+  "expected": [
+    {
+      "name": "n",
+      "value": "é",
+      "valueless": false
+    }
+  ]
+}

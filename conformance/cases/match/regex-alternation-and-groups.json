@@ -1,0 +1,20 @@
+{
+  "id": "match/regex-alternation-and-groups",
+  "kind": "regex",
+  "level": "core",
+  "description": "Plain groups and alternation are in the subset.",
+  "pattern": "(cat|dog)s",
+  "subjects": [
+    "cats",
+    "dogs",
+    "cows"
+  ],
+  "expected": {
+    "valid": true,
+    "matches": [
+      true,
+      true,
+      false
+    ]
+  }
+}

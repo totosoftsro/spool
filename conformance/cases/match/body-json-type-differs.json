@@ -1,0 +1,30 @@
+{
+  "id": "match/body-json-type-differs",
+  "kind": "match",
+  "level": "core",
+  "description": "A number and a string are different types.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": 1
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "n": "1"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": false
+  }
+}

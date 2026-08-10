@@ -1,0 +1,27 @@
+{
+  "id": "structural/unknown-body-encoding",
+  "kind": "structural",
+  "level": "core",
+  "description": "Unknown body encodings are rejected.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/",
+          "body": {
+            "encoding": "hex"
+          }
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "encoding"
+  }
+}

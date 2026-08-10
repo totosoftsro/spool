@@ -1,0 +1,14 @@
+{
+  "id": "normalize/query-split-first-equals",
+  "kind": "query",
+  "level": "core",
+  "description": "Step 3: split on the first = only.",
+  "query": "a=b=c",
+  "expected": [
+    {
+      "name": "a",
+      "value": "b=c",
+      "valueless": false
+    }
+  ]
+}

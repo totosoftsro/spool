@@ -1,0 +1,15 @@
+{
+  "id": "match/template-adjacent-placeholders",
+  "kind": "template",
+  "level": "core",
+  "description": "Adjacent placeholders leave an empty gap for all but the last.",
+  "recorded": "{{any}}{{any}}",
+  "subjects": [
+    "ab"
+  ],
+  "expected": {
+    "matches": [
+      true
+    ]
+  }
+}

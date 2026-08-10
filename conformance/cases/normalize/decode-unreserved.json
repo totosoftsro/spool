@@ -1,0 +1,15 @@
+{
+  "id": "normalize/decode-unreserved",
+  "kind": "normalize",
+  "level": "core",
+  "description": "Step 6: unreserved octets are decoded.",
+  "url": "https://x.test/%41%42%7e%2D",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": null,
+    "path": "/AB~-",
+    "query": [],
+    "href": "https://x.test/AB~-"
+  }
+}

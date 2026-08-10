@@ -1,0 +1,10 @@
+{
+  "id": "canonical/max-safe-integer",
+  "kind": "canonical",
+  "level": "core",
+  "description": "2^53-1 is exactly representable.",
+  "value": {
+    "x": 9007199254740991
+  },
+  "expected": "{\"x\":9007199254740991}"
+}

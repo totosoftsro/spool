@@ -1,0 +1,19 @@
+{
+  "id": "normalize/query-valueless-vs-empty",
+  "kind": "query",
+  "level": "core",
+  "description": "Step 3: a parameter with no = is valueless, which is distinct from an empty value.",
+  "query": "flag&other=",
+  "expected": [
+    {
+      "name": "flag",
+      "value": "",
+      "valueless": true
+    },
+    {
+      "name": "other",
+      "value": "",
+      "valueless": false
+    }
+  ]
+}

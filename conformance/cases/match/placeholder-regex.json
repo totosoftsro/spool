@@ -1,0 +1,30 @@
+{
+  "id": "match/placeholder-regex",
+  "kind": "match",
+  "level": "core",
+  "description": "{{regex:...}} is anchored against the whole subject.",
+  "recorded": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "{{regex:v[0-9]+}}"
+      }
+    }
+  },
+  "live": {
+    "method": "POST",
+    "url": "https://api.test/a",
+    "body": {
+      "encoding": "json",
+      "json": {
+        "v": "v12"
+      }
+    }
+  },
+  "config": {},
+  "expected": {
+    "matches": true
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-unicode-property",
+  "kind": "regex",
+  "level": "core",
+  "description": "Unicode property escapes are excluded.",
+  "pattern": "\\p{L}",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}
