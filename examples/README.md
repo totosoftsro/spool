@@ -7,6 +7,7 @@ All three are runnable and are exercised in CI, so they cannot rot.
 | [`cross-language/`](./cross-language/) | **Start here.** One fixture replayed from both Python and Node. The reason the format exists. |
 | [`typescript-vitest/`](./typescript-vitest/) | Vitest, global `fetch`, placeholders for values that change every run, fault simulation. |
 | [`python-pytest/`](./python-pytest/) | pytest, httpx, `defaults.match` to ignore a generated field, retry-after-failure. |
+| [`serve-any-language/`](./serve-any-language/) | `spool serve` replayed by **curl** — no Spool library, no adapter. The proof that any language works. |
 
 Every fixture here is validated by `spool lint` in CI. A broken example is worse
 than no example.
@@ -28,6 +29,10 @@ parameter.
 idempotency key, so the test does not have to patch `uuid.uuid4`; a 402 handled
 as a domain error; and a connection reset followed by a successful retry.
 
+**serve-any-language** — the same matching engine reached over a socket by a
+client that knows nothing about Spool, including a POST that is correctly
+rejected for having the wrong body, and a 551 carrying the full explanation.
+
 ## Running them
 
 ```bash
@@ -40,6 +45,10 @@ cd typescript-vitest && npm install && npm test
 
 ```bash
 cd python-pytest && PYTHONPATH=../../implementations/python/src pytest tests -q
+```
+
+```bash
+cd serve-any-language && ./run.sh
 ```
 
 The examples resolve the implementations from this repository rather than from

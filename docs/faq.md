@@ -12,12 +12,13 @@ and its TypeScript client is a genuine simplification.
 
 ### Is this a mock server?
 
-No. There is no server, no port, no process. Spool plugs into your HTTP client
-inside your test process. If you want a real HTTP server for a language with no
-adapter, WireMock and MockServer do that well.
+It can be one, but that is not the default mode. Normally Spool plugs into your
+HTTP client inside your test process — no server, no port.
 
-A record/replay proxy is on the roadmap, which would make HIF usable from any
-language on day one. It does not exist yet.
+When you want a server, `spool serve` turns a fixture into an HTTP origin and
+`spool proxy` replays over `HTTP_PROXY`. That is how you use HIF from a language
+with no library: point your client's base URL at it. Matching, explanations and
+redaction are the same engine either way.
 
 ### Does it need a service or an account?
 
@@ -68,9 +69,17 @@ still want to assert the *shape*.
 
 ### Can I use this with axios / got / node-fetch v2?
 
-Not yet. The TypeScript adapter covers global `fetch`; those clients use Node's
-`http` module. An adapter for it is the most-wanted contribution
-([contributing-adapters.md](./contributing-adapters.md)).
+Yes. Those clients use Node's `http` module rather than global `fetch`, so use
+the `node:http` adapter:
+
+```ts
+import { installNodeHttpReplay } from '@spool/hif/node-http';
+const spool = installNodeHttpReplay(fixtureText);
+```
+
+Prefer `@spool/hif/fetch` when your code uses global `fetch` — it hooks a
+documented seam, whereas the `node:http` adapter has to replace the module
+functions, since Node offers no interception hook.
 
 On Python, both `httpx` and `requests` are covered.
 
@@ -124,6 +133,36 @@ It runs the shared suite in CI. Levels are asserted by the suite, not declared
 in a README. An implementation may not advertise a level it does not pass, and
 the cross-check job additionally verifies that the implementations agree with
 each other.
+
+### How do I use this from Go, Rust, Java or anything else?
+
+`spool serve fixtures/api.hif.json`, then point your client's base URL at the
+address it prints. No library in your language is required, and unmatched
+requests come back as a 551 whose body is the full explanation.
+
+If your fixture spans several origins, use `spool proxy` and set `HTTP_PROXY`
+instead — the client then sends the full URL, so no origin mapping is needed.
+
+### Why will `spool proxy` not handle https?
+
+Because intercepting a CONNECT tunnel requires generating a TLS certificate and
+persuading your client to trust it. Installing a man-in-the-middle certificate
+authority on a developer machine or in CI is a bigger security decision than a
+test tool should make on your behalf.
+
+`spool serve` handles https origins without one: your client speaks plain HTTP
+to localhost while the fixture still describes the original https origin, so
+nothing about the recording changes.
+
+### Can I import my existing HAR files?
+
+`spool import har capture.har`. It reports exactly what it dropped — HAR carries
+page records, cache entries and per-phase timings that HIF has no equivalent for
+— and it redacts by default, because a browser HAR is full of cookies and auth
+headers.
+
+You will usually want to add `query.ignore` for cache-busting parameters
+afterwards, since HAR carries no matching rules at all.
 
 ### Something in the specification is unclear.
 

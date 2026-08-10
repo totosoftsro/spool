@@ -6,6 +6,7 @@
 | [Matching](./matching.md) | A request is not matching, or is matching when it should not. |
 | [Explained mismatches](./explain.md) | You want to understand the failure report, or extend it. |
 | [Redaction](./redaction.md) | Before you record against anything real. |
+| [Serving from any language](./serving.md) | Your language has no adapter, or the code under test is another process. |
 | [CLI reference](./cli.md) | You are using `spool` from a shell or CI. |
 | [Migrating](./migrating.md) | You already use VCR, nock, MSW, or HAR files. |
 | [Design decisions](./design-decisions.md) | You want to know why something works the way it does. |

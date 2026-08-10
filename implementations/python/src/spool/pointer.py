@@ -9,6 +9,7 @@ from __future__ import annotations
 import copy
 from typing import Any, List, NamedTuple, Tuple
 
+from ._text import q
 from .errors import HifStructuralError
 
 WILDCARD = object()
@@ -25,7 +26,7 @@ def parse_path(path: str) -> List[PathToken]:
             "JSON path must not be empty; the whole-document pointer is not valid here"
         )
     if not path.startswith("/"):
-        raise HifStructuralError(f'JSON path must start with "/": {path!r}')
+        raise HifStructuralError(f'JSON path must start with "/": {q(path)}')
     tokens: List[PathToken] = []
     for raw in path[1:].split("/"):
         if raw == "*":
@@ -53,7 +54,7 @@ def _unescape_token(token: str, path: str) -> str:
             out.append("*")
         else:
             raise HifStructuralError(
-                f"Invalid escape ~{nxt} in JSON path {path!r}; only ~0, ~1 and ~2 are defined"
+                f"Invalid escape ~{nxt} in JSON path {q(path)}; only ~0, ~1 and ~2 are defined"
             )
         i += 2
     return "".join(out)

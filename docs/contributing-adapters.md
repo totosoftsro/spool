@@ -8,8 +8,8 @@ makes this one of the best-scoped ways to contribute.
 
 | Ecosystem | Client | Notes |
 | --- | --- | --- |
-| Node | `http` / `https` modules | The biggest gap. Would cover axios, got, node-fetch v2, superagent — anything not on global `fetch`. |
-| Python | `aiohttp` | Async, no adapter yet. |
+| Python | `aiohttp` | Async, no adapter yet. Probably the biggest remaining gap. |
+| Node | `undici` Dispatcher | Would let `fetch` be intercepted through undici's own seam rather than by replacing the global. |
 | Python | `urllib3` directly | Below `requests`; some libraries use it straight. |
 | Browser | Service Worker | Would let HIF fixtures back browser tests, in MSW's territory. |
 

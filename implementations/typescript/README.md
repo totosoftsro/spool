@@ -46,13 +46,44 @@ try {
 
 ## Adapter coverage
 
-The `fetch` adapter replaces `globalThis.fetch`, which covers anything built on
-global fetch.
+| Adapter | Covers |
+| --- | --- |
+| `@spool/hif/fetch` | Anything on global `fetch`. Node 18+, Deno, Bun. |
+| `@spool/hif/node-http` | Anything on `node:http` / `node:https`: axios, got, node-fetch v2, superagent. |
 
-It does **not** cover clients that use Node's `http`/`https` modules directly —
-axios on Node, node-fetch v2, got, superagent. An adapter for those is the
-project's most-wanted contribution; see
-[docs/contributing-adapters.md](../../docs/contributing-adapters.md).
+```ts
+import { installNodeHttpReplay } from '@spool/hif/node-http';
+
+const spool = installNodeHttpReplay(fixtureText);
+try {
+  const { data } = await axios.get('https://api.example.com/users/7');
+} finally {
+  spool.restore();
+}
+```
+
+Prefer the `fetch` adapter where it applies: it swaps one global with a
+documented shape, whereas the `node:http` adapter has to replace the module's
+`request` and `get` functions, since Node exposes no interception hook. Always
+`restore()` in a `finally` or an `afterEach`.
+
+## Serving a fixture over HTTP
+
+For code you cannot instrument — another process, a container, a language with
+no adapter:
+
+```ts
+import { serveFixture } from '@spool/hif';
+
+const server = await serveFixture(fixture, { port: 0 });
+try {
+  await runTests(server.url);
+} finally {
+  await server.close();
+}
+```
+
+Or from the CLI, `spool serve`. See [docs/serving.md](../../docs/serving.md).
 
 ## Public API
 

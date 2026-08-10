@@ -17,6 +17,7 @@ from .body import body_bytes
 from .digest import digest_request
 from .errors import HifStructuralError
 from .fixture import SUPPORTED_VERSION, load_fixture, serialize_fixture
+from .har import import_har_text
 from .player import Player
 from .redact import redact_fixture, scan_fixture
 from .render import render_mismatch
@@ -31,12 +32,20 @@ Usage:
   spool redact <fixture> [-o out]    Apply redaction rules to an existing fixture
   spool explain <fixture> <request>  Explain why a request does not match
   spool diff <a> <b>                 Compare two fixtures interaction by interaction
+  spool import har <file> [-o out]   Convert a HAR file into a fixture
+  spool serve <fixture...>           Serve a fixture as an HTTP origin (any language)
+  spool proxy <fixture...>           Replay through an HTTP forward proxy
 
 Options:
   -o, --output <path>   Write output to a file instead of stdout
       --json            Machine-readable output where supported
       --all             Show every candidate in explain output
       --color           Force ANSI colour
+      --port <n>        Port for serve/proxy. Default 8080, or 0 to pick a free one
+      --origin <url>    Origin that serve should map incoming requests onto
+      --record <path>   Record to this fixture instead of replaying
+      --no-redact       Disable redaction while recording. Do not commit the result
+      --latency         Honour recorded timing.latencyMs when replaying
   -h, --help            Show this help
   -v, --version         Show the version
 
@@ -58,6 +67,11 @@ class Options:
     json_output: bool = False
     all_candidates: bool = False
     color: bool = False
+    port: Optional[int] = None
+    origin: Optional[str] = None
+    record: Optional[str] = None
+    redact: bool = True
+    latency: bool = False
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -83,6 +97,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             options.all_candidates = True
         elif arg == "--color":
             options.color = True
+        elif arg == "--port":
+            index += 1
+            options.port = int(args[index]) if index < len(args) else None
+        elif arg == "--origin":
+            index += 1
+            options.origin = args[index] if index < len(args) else None
+        elif arg == "--record":
+            index += 1
+            options.record = args[index] if index < len(args) else None
+        elif arg == "--no-redact":
+            options.redact = False
+        elif arg == "--latency":
+            options.latency = True
         elif arg.startswith("-"):
             sys.stderr.write(f"Unknown option {arg}\n\n{USAGE}")
             return 2
@@ -103,6 +130,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "redact": cmd_redact,
         "explain": cmd_explain,
         "diff": cmd_diff,
+        "import": cmd_import,
+        "serve": cmd_serve,
+        "proxy": cmd_proxy,
     }
     handler = handlers.get(command)
     if handler is None:
@@ -396,6 +426,155 @@ def cmd_diff(paths: List[str], options: Options) -> int:
     else:
         sys.stdout.write("\n".join(changes) + "\n")
     return 0 if not changes else 1
+
+
+def cmd_import(args: List[str], options: Options) -> int:
+    if not args or args[0] != "har":
+        got = args[0] if args else ""
+        return _usage_error(f'import supports only "har", got {got!r}')
+    if len(args) < 2:
+        return _usage_error("import har requires a file path")
+
+    path = args[1]
+    with open(path, encoding="utf-8") as handle:
+        result = import_har_text(handle.read())
+
+    # Redaction is applied by default: a browser HAR is full of cookies and auth
+    # headers, and importing one unredacted into a repository is the mistake
+    # this command exists to prevent. --no-redact opts out, loudly.
+    fixture = result.fixture
+    rules: List[str] = []
+    if options.redact:
+        redacted = redact_fixture(fixture)
+        fixture = redacted.fixture
+        rules = redacted.rules
+
+    _emit(serialize_fixture(fixture), options)
+
+    report = [
+        f"Imported {len(fixture['interactions'])} interaction(s) from {path}.",
+        "",
+        "What the conversion dropped or changed:",
+    ]
+    report.extend(f"  - {note}" for note in result.notes)
+    if result.skipped:
+        report.extend(["", f"Skipped {len(result.skipped)} entr(y/ies):"])
+        for item in result.skipped[:10]:
+            report.append(f"  - {item['url']}: {item['reason']}")
+        if len(result.skipped) > 10:
+            report.append(f"  ... and {len(result.skipped) - 10} more")
+    report.append("")
+    if not options.redact:
+        report.append(
+            "Redaction was DISABLED. This fixture may contain cookies and credentials verbatim."
+        )
+    elif rules:
+        report.append(
+            f"Redaction applied ({', '.join(rules)}). Detection has false negatives; read the result."
+        )
+    else:
+        report.append(
+            "No redaction rule matched. That does not mean the result is free of secrets; read it."
+        )
+    sys.stderr.write("\n".join(report) + "\n")
+    return 0
+
+
+def _merge_fixtures(paths: List[str]) -> Dict[str, Any]:
+    """Serve several fixtures as one. Document order is preserved across files."""
+    loaded = [load_fixture(p).fixture for p in paths]
+    merged: Dict[str, Any] = {"hif": loaded[0]["hif"], "interactions": []}
+    if loaded[0].get("defaults"):
+        merged["defaults"] = loaded[0]["defaults"]
+    for fixture in loaded:
+        merged["interactions"].extend(fixture.get("interactions", []))
+    return merged
+
+
+def _stderr_log(line: str) -> None:
+    sys.stderr.write(f"  {line}\n")
+
+
+def cmd_serve(paths: List[str], options: Options) -> int:
+    return _run_server("serve", paths, options)
+
+
+def cmd_proxy(paths: List[str], options: Options) -> int:
+    return _run_server("proxy", paths, options)
+
+
+def _run_server(mode: str, paths: List[str], options: Options) -> int:
+    import signal
+
+    from .serve import origins_of, proxy_fixture, record_serve, serve_fixture
+
+    if options.record:
+        if mode == "proxy":
+            sys.stderr.write(
+                "error: recording through a forward proxy is not supported; "
+                "use serve --record --origin <url>\n"
+            )
+            return 2
+        if not options.origin:
+            sys.stderr.write("error: serve --record requires --origin, the upstream to forward to\n")
+            return 2
+
+        recording = record_serve(
+            origin=options.origin,
+            port=options.port if options.port is not None else 8080,
+            redact=None if options.redact else False,
+            on_log=_stderr_log,
+        )
+        sys.stderr.write(f"spool recording {recording.url} -> {options.origin}\n")
+        sys.stderr.write("Press Ctrl+C to stop and write the fixture.\n\n")
+        try:
+            signal.pause()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            out = options.output or options.record
+            with open(out, "w", encoding="utf-8") as handle:
+                handle.write(recording.to_json())
+            sys.stderr.write(f"\nWrote {out}\n{recording.redaction_summary()}\n")
+            recording.close()
+        return 0
+
+    if not paths:
+        return _usage_error(f"{mode} requires at least one fixture path")
+
+    merged = _merge_fixtures(paths)
+    port = options.port if options.port is not None else 8080
+    def log(line: str) -> None:
+        sys.stderr.write(f"  {line}\n")
+
+    if mode == "serve":
+        running = serve_fixture(
+            merged, port=port, origin=options.origin, simulate_latency=options.latency, on_log=log
+        )
+        origin = options.origin or origins_of(merged)[0]
+        count = len(merged["interactions"])
+        sys.stderr.write(f"spool serving {count} interaction(s) at {running.url}\n")
+        sys.stderr.write(f"Requests are matched as if sent to {origin}\n")
+        sys.stderr.write(f"\n  export API_BASE_URL={running.url}\n\n")
+    else:
+        running = proxy_fixture(merged, port=port, simulate_latency=options.latency, on_log=log)
+        count = len(merged["interactions"])
+        sys.stderr.write(f"spool proxying {count} interaction(s) at {running.url}\n")
+        sys.stderr.write(f"\n  export HTTP_PROXY={running.url}\n\n")
+        sys.stderr.write(
+            "Note: https via CONNECT is not supported. Use `spool serve` for https origins.\n\n"
+        )
+
+    sys.stderr.write(
+        "An unmatched request answers 551 with the full explanation. Ctrl+C to stop.\n\n"
+    )
+    try:
+        signal.pause()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        running.close()
+    return 0
 
 
 if __name__ == "__main__":  # pragma: no cover

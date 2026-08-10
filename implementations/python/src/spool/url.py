@@ -11,6 +11,7 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
+from ._text import q
 from .errors import HifStructuralError
 
 DEFAULT_PORTS = {"http": 80, "https": 443}
@@ -41,11 +42,11 @@ class ParsedUrl(NamedTuple):
 def normalize_url(url: str) -> ParsedUrl:
     match = _URL.match(url)
     if not match:
-        raise HifStructuralError(f"Not an absolute URL: {url!r}")
+        raise HifStructuralError(f"Not an absolute URL: {q(url)}")
 
     scheme = match.group("scheme").lower()
     if scheme not in DEFAULT_PORTS:
-        raise HifStructuralError(f"Unsupported URL scheme {scheme!r}; HIF 1.0 covers http and https")
+        raise HifStructuralError(f"Unsupported URL scheme {q(scheme)}; HIF 1.0 covers http and https")
 
     rest = match.group("rest")
     authority, path_and_more = _split_authority(rest)
@@ -75,7 +76,7 @@ def _split_host_port(authority: str, scheme: str, url: str) -> Tuple[str, Option
     if authority.startswith("["):  # IPv6 literal
         close = authority.find("]")
         if close == -1:
-            raise HifStructuralError(f"Malformed IPv6 authority in {url!r}")
+            raise HifStructuralError(f"Malformed IPv6 authority in {q(url)}")
         host = authority[: close + 1]
         remainder = authority[close + 1 :]
         port_text = remainder[1:] if remainder.startswith(":") else ""
@@ -89,7 +90,7 @@ def _split_host_port(authority: str, scheme: str, url: str) -> Tuple[str, Option
     if port_text == "":
         return host, None
     if not port_text.isdigit():
-        raise HifStructuralError(f"Malformed port in {url!r}")
+        raise HifStructuralError(f"Malformed port in {q(url)}")
     port = int(port_text)
     return host, (None if port == DEFAULT_PORTS[scheme] else port)
 

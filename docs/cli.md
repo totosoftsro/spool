@@ -164,6 +164,64 @@ Exits 1 when there are changes, which makes it usable as a re-record gate:
 record into a temporary file, diff against the committed one, and fail the build
 if the upstream API has moved.
 
+## `spool import har <file> [-o out]`
+
+Convert a browser HAR capture into a fixture, per
+[Appendix B](../specification/hif-1.0.md#appendix-b--relationship-to-har).
+
+```bash
+spool import har capture.har -o fixtures/api.hif.json
+```
+
+The fixture goes to stdout or `-o`. A report of **what the conversion dropped**
+goes to stderr, and it is not optional decoration — HAR carries page records,
+cache entries, connection details and per-phase timings that HIF has no
+equivalent for, and a converter that hid that would be lying about fidelity.
+
+Entries are skipped, with a reason, when they were served from the browser
+cache, use a non-HTTP scheme, or have status 0 because the request was aborted.
+
+**Redaction runs by default.** A browser HAR is full of cookies and
+`authorization` headers, and importing one unredacted into a repository is the
+mistake this command exists to prevent. `--no-redact` opts out and says so.
+
+Two things you will usually want afterwards: `query.ignore` for cache-busting
+parameters, and a read of the file.
+
+## `spool serve <fixture...>`
+
+Serve a fixture as an HTTP origin, so any language can replay it with no Spool
+library. Full guide: [serving.md](./serving.md).
+
+```bash
+spool serve fixtures/api.hif.json
+spool serve fixtures/api.hif.json --port 0 --origin https://api.example.com
+spool serve --record fixtures/new.hif.json --origin https://api.example.com
+```
+
+Unmatched requests answer **551** with the full explanation as the body.
+
+| Option | |
+| --- | --- |
+| `--port <n>` | Default 8080. `--port 0` picks a free port. |
+| `--origin <url>` | Required when the fixture spans more than one origin. |
+| `--record <path>` | Forward to `--origin`, record, write on Ctrl+C. |
+| `--no-redact` | Disable redaction while recording. |
+| `--latency` | Honour `timing.latencyMs`. |
+
+## `spool proxy <fixture...>`
+
+Replay over `HTTP_PROXY`. The client sends the full URL, so multi-origin
+fixtures work without an `--origin`.
+
+```bash
+spool proxy fixtures/api.hif.json
+export HTTP_PROXY=http://127.0.0.1:8080
+```
+
+https through CONNECT is deliberately unsupported, and the proxy says why when
+asked. Use `serve` for https origins.
+
 ## Recipes
 
 **Validate every fixture in CI**
@@ -178,6 +236,21 @@ spool lint $(find . -name '*.hif.json' -not -path './node_modules/*')
 # Re-record against the real API, then compare with what is committed.
 spool diff fixtures/api.hif.json /tmp/api.fresh.hif.json || \
   echo "The upstream API has changed since this fixture was recorded."
+```
+
+**Replay for a service in a language with no adapter**
+
+```bash
+spool serve fixtures/api.hif.json --port 0 &
+# ... read the printed port, run your test suite against it ...
+```
+
+**Convert a browser capture and review it**
+
+```bash
+spool import har capture.har -o fixtures/api.hif.json   # report goes to stderr
+spool inspect fixtures/api.hif.json
+spool scan fixtures/api.hif.json
 ```
 
 **Scan before publishing**

@@ -14,6 +14,7 @@ import { Player } from './player.js';
 import { renderMismatch } from './render.js';
 import { redactFixture, scanFixture } from './redact.js';
 import { HifStructuralError } from './errors.js';
+import { importHarText } from './har.js';
 import { bodyBytes } from './body.js';
 import { VERSION } from './index.js';
 import type { Fixture, HifRequest } from './types.js';
@@ -28,12 +29,20 @@ Usage:
   spool redact <fixture> [-o out]    Apply redaction rules to an existing fixture
   spool explain <fixture> <request>  Explain why a request does not match
   spool diff <a> <b>                 Compare two fixtures interaction by interaction
+  spool import har <file> [-o out]   Convert a HAR file into a fixture
+  spool serve <fixture...>           Serve a fixture as an HTTP origin (any language)
+  spool proxy <fixture...>           Replay through an HTTP forward proxy
 
 Options:
   -o, --output <path>   Write output to a file instead of stdout
       --json            Machine-readable output where supported
       --all             Show every candidate in explain output
       --color           Force ANSI colour
+      --port <n>        Port for serve/proxy. Default 8080, or 0 to pick a free one
+      --origin <url>    Origin that serve should map incoming requests onto
+      --record <path>   Record to this fixture instead of replaying
+      --no-redact       Disable redaction while recording. Do not commit the result
+      --latency         Honour recorded timing.latencyMs when replaying
   -h, --help            Show this help
   -v, --version         Show the version
 
@@ -53,11 +62,16 @@ interface Options {
   json: boolean;
   all: boolean;
   color: boolean;
+  port?: number;
+  origin?: string;
+  record?: string;
+  redact: boolean;
+  latency: boolean;
 }
 
 function main(argv: string[]): number {
   const args: string[] = [];
-  const options: Options = { json: false, all: false, color: false };
+  const options: Options = { json: false, all: false, color: false, redact: true, latency: false };
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]!;
@@ -82,6 +96,21 @@ function main(argv: string[]): number {
         break;
       case '--color':
         options.color = true;
+        break;
+      case '--port':
+        options.port = Number(argv[++i]);
+        break;
+      case '--origin':
+        options.origin = argv[++i];
+        break;
+      case '--record':
+        options.record = argv[++i];
+        break;
+      case '--no-redact':
+        options.redact = false;
+        break;
+      case '--latency':
+        options.latency = true;
         break;
       default:
         if (arg.startsWith('-')) {
@@ -114,6 +143,11 @@ function main(argv: string[]): number {
         return cmdExplain(args, options);
       case 'diff':
         return cmdDiff(args, options);
+      case 'import':
+        return cmdImport(args, options);
+      case 'serve':
+      case 'proxy':
+        return cmdServe(command, args, options);
       default:
         process.stderr.write(`Unknown command "${command}"\n\n${USAGE}`);
         return 2;
@@ -352,6 +386,131 @@ function cmdDiff(args: string[], options: Options): number {
     process.stdout.write(changes.join('\n') + '\n');
   }
   return changes.length === 0 ? 0 : 1;
+}
+
+function cmdImport(args: string[], options: Options): number {
+  const [format, path] = args;
+  if (format !== 'har') {
+    return usage(`import supports only "har", got ${JSON.stringify(format ?? '')}`);
+  }
+  if (!path) return usage('import har requires a file path');
+
+  const result = importHarText(readFileSync(path, 'utf8'));
+
+  // Redaction is applied by default: a browser HAR is full of cookies and auth
+  // headers, and importing one unredacted into a repository is the mistake this
+  // command exists to prevent. --no-redact opts out, loudly.
+  let fixture = result.fixture;
+  let redactionRules: string[] = [];
+  if (options.redact) {
+    const redacted = redactFixture(fixture);
+    fixture = redacted.value;
+    redactionRules = redacted.rules;
+  }
+
+  emit(serializeFixture(fixture), options);
+
+  const report = [
+    `Imported ${fixture.interactions.length} interaction(s) from ${path}.`,
+    '',
+    'What the conversion dropped or changed:',
+    ...result.notes.map((n) => `  - ${n}`),
+  ];
+  if (result.skipped.length > 0) {
+    report.push('', `Skipped ${result.skipped.length} entr(y/ies):`);
+    for (const s of result.skipped.slice(0, 10)) report.push(`  - ${s.url}: ${s.reason}`);
+    if (result.skipped.length > 10) report.push(`  ... and ${result.skipped.length - 10} more`);
+  }
+  report.push('');
+  report.push(
+    options.redact
+      ? redactionRules.length > 0
+        ? `Redaction applied (${redactionRules.join(', ')}). Detection has false negatives; read the result.`
+        : 'No redaction rule matched. That does not mean the result is free of secrets; read it.'
+      : 'Redaction was DISABLED. This fixture may contain cookies and credentials verbatim.',
+  );
+  process.stderr.write(report.join('\n') + '\n');
+  return 0;
+}
+
+function cmdServe(command: 'serve' | 'proxy', paths: string[], options: Options): number {
+  if (paths.length === 0) return usage(`${command} requires at least one fixture path`);
+
+  // Servers are long-lived, so this is the one command that does not return.
+  void (async () => {
+    const { serveFixture, proxyFixture, recordServe, originsOf } = await import('./serve.js');
+
+    if (options.record) {
+      if (command === 'proxy') {
+        process.stderr.write('error: recording through a forward proxy is not supported; use serve --record --origin <url>\n');
+        process.exitCode = 2;
+        return;
+      }
+      if (!options.origin) {
+        process.stderr.write('error: serve --record requires --origin, the upstream to forward to\n');
+        process.exitCode = 2;
+        return;
+      }
+      const running = await recordServe({
+        origin: options.origin,
+        port: options.port ?? 8080,
+        redact: options.redact ? {} : false,
+        onRequest: (line) => process.stderr.write(`  ${line}\n`),
+      });
+      process.stderr.write(`spool recording ${running.url} -> ${options.origin}\n`);
+      process.stderr.write('Press Ctrl+C to stop and write the fixture.\n\n');
+
+      const finish = (): void => {
+        const out = options.output ?? options.record!;
+        writeFileSync(out, running.toJSON());
+        process.stderr.write(`\nWrote ${out}\n${running.redactionSummary()}\n`);
+        void running.close().then(() => process.exit(0));
+      };
+      process.on('SIGINT', finish);
+      process.on('SIGTERM', finish);
+      return;
+    }
+
+    const fixtures = paths.map(load);
+    const merged: Fixture = {
+      hif: fixtures[0]!.hif,
+      ...(fixtures[0]!.defaults ? { defaults: fixtures[0]!.defaults } : {}),
+      interactions: fixtures.flatMap((f) => f.interactions),
+    };
+
+    const shared = {
+      port: options.port ?? 8080,
+      simulateLatency: options.latency,
+      color: options.color,
+      onRequest: (line: string) => process.stderr.write(`  ${line}\n`),
+    };
+
+    const running =
+      command === 'serve'
+        ? await serveFixture(merged, { ...shared, ...(options.origin ? { origin: options.origin } : {}) })
+        : await proxyFixture(merged, shared);
+
+    if (command === 'serve') {
+      const origin = options.origin ?? originsOf(merged)[0];
+      process.stderr.write(`spool serving ${merged.interactions.length} interaction(s) at ${running.url}\n`);
+      process.stderr.write(`Requests are matched as if sent to ${origin}\n`);
+      process.stderr.write(`\n  export API_BASE_URL=${running.url}\n\n`);
+    } else {
+      process.stderr.write(`spool proxying ${merged.interactions.length} interaction(s) at ${running.url}\n`);
+      process.stderr.write(`\n  export HTTP_PROXY=${running.url}\n\n`);
+      process.stderr.write('Note: https via CONNECT is not supported. Use `spool serve` for https origins.\n\n');
+    }
+    process.stderr.write('An unmatched request answers 551 with the full explanation. Ctrl+C to stop.\n\n');
+
+    const stop = (): void => void running.close().then(() => process.exit(0));
+    process.on('SIGINT', stop);
+    process.on('SIGTERM', stop);
+  })().catch((err) => {
+    process.stderr.write(`error: ${(err as Error).message}\n`);
+    process.exitCode = 1;
+  });
+
+  return 0;
 }
 
 function usage(message: string): number {

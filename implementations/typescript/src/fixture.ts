@@ -241,7 +241,15 @@ function checkPlaceholders(body: unknown, at: string): void {
 function walkJson(value: JsonValue, at: string): void {
   if (typeof value === 'string') {
     const ph = parsePlaceholder(value);
-    if (ph?.kind === 'regex') compilePortableRegex(ph.pattern);
+    if (ph?.kind === 'regex') {
+      try {
+        compilePortableRegex(ph.pattern);
+      } catch (err) {
+        // Re-thrown with the location, so the message names the body the bad
+        // pattern is in rather than just the pattern.
+        throw new HifStructuralError((err as Error).message, at);
+      }
+    }
     return;
   }
   if (Array.isArray(value)) {
@@ -340,7 +348,7 @@ function validateFault(raw: unknown, at: string, warnings: string[]): void {
   warnUnknown(f, ['type', 'afterMs', 'message'], at, warnings);
   if (typeof f['type'] !== 'string' || !FAULT_TYPES.has(f['type'])) {
     throw new HifStructuralError(
-      `Unknown fault type ${JSON.stringify(f['type'])}; expected one of ${[...FAULT_TYPES].join(', ')}`,
+      `Unknown fault type ${JSON.stringify(f['type'])}; expected one of ${[...FAULT_TYPES].sort().join(', ')}`,
       at,
     );
   }

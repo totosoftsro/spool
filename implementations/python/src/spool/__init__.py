@@ -42,6 +42,7 @@ from .fixture import (
     serialize_fixture,
     validate_fixture,
 )
+from .har import HarImportOptions, HarImportResult, import_har, import_har_text
 from .match import (
     FieldResult,
     NormalizedRequest,
@@ -82,6 +83,15 @@ from .redact import (
 )
 from .regexsubset import CompiledPattern, compile_portable_regex
 from .render import render_mismatch, render_request
+from .serve import (
+    RecordingServer,
+    RunningServer,
+    infer_origin,
+    origins_of,
+    proxy_fixture,
+    record_serve,
+    serve_fixture,
+)
 from .url import ParsedUrl, QueryParam, decode_query, encode_query, normalize_url, remove_dot_segments
 
 __version__ = "0.1.0"
@@ -92,16 +102,16 @@ CONFORMANCE_LEVELS = ("core", "explain", "redact", "full")
 
 __all__ = [
     "CONFORMANCE_LEVELS",
+    "CandidateReport",
+    "CompiledPattern",
     "DEFAULT_HEADERS",
     "DEFAULT_JSON_FIELDS",
     "DEFAULT_QUERY_PARAMS",
-    "REDACTED",
-    "SUPPORTED_VERSION",
-    "CandidateReport",
-    "CompiledPattern",
     "DeliverableResponse",
     "EntropyConfig",
     "FieldResult",
+    "HarImportOptions",
+    "HarImportResult",
     "HifExpectationError",
     "HifFaultError",
     "HifMatchError",
@@ -115,9 +125,13 @@ __all__ = [
     "Play",
     "Player",
     "QueryParam",
+    "REDACTED",
     "Recorder",
+    "RecordingServer",
     "RedactionConfig",
     "RedactionResult",
+    "RunningServer",
+    "SUPPORTED_VERSION",
     "ScanFinding",
     "Suggestion",
     "TextTemplate",
@@ -141,6 +155,9 @@ __all__ = [
     "fault_error",
     "find_lossy_numbers",
     "format_path",
+    "import_har",
+    "import_har_text",
+    "infer_origin",
     "interaction_ref",
     "is_match",
     "is_placeholder",
@@ -151,11 +168,14 @@ __all__ = [
     "normalize_url",
     "omit_paths",
     "or_empty",
+    "origins_of",
     "parse_fixture",
     "parse_path",
     "parse_placeholder",
     "parse_text_template",
     "play_limit",
+    "proxy_fixture",
+    "record_serve",
     "redact_fixture",
     "redact_request",
     "redact_response",
@@ -169,6 +189,7 @@ __all__ = [
     "satisfies_string",
     "scan_fixture",
     "serialize_fixture",
+    "serve_fixture",
     "shannon_entropy",
     "string_matches",
     "strip_ows",

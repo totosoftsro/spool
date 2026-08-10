@@ -31,7 +31,11 @@
       "types": "./dist/adapters/fetch.d.ts",
       "import": "./dist/adapters/fetch.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./node-http": {
+      "types": "./dist/adapters/node-http.d.ts",
+      "import": "./dist/adapters/node-http.js"
+    }
   },
   "files": [
     "dist",
@@ -45,9 +49,9 @@
     "conformance": "vitest run test/conformance.test.ts",
     "prepublishOnly": "npm run build"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "axios": "^1.19.0",
     "typescript": "^5.7.0",
     "vitest": "^2.1.0"
   },

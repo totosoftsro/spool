@@ -71,11 +71,10 @@ nock('https://api.example.com')
 | `.delay(ms)` | `timing: { "latencyMs": ms }`, honoured only when latency simulation is enabled |
 | A function matcher | A placeholder, or `match.body.json.ignore` |
 
-**Note:** nock intercepts `http.ClientRequest`, so it covers axios and got.
-Spool's TypeScript adapter currently covers global `fetch` only. If your code
-uses axios on Node, the adapter you need does not exist yet — see
-[contributing-adapters.md](./contributing-adapters.md). Better to know that now
-than after the migration.
+**Adapter note:** nock intercepts `http.ClientRequest`, so it covers axios and
+got. Spool covers the same ground with `@spool/hif/node-http`; use
+`@spool/hif/fetch` instead when your code is on global `fetch`, since that hooks
+a documented seam rather than replacing module functions.
 
 ## From MSW
 
@@ -112,9 +111,11 @@ Two things to do by hand after converting:
    cookies and auth headers. `spool redact converted.hif.json` is the minimum;
    reading the file is better.
 
-A `spool import har` command is a
-[good first issue](../CONTRIBUTING.md#good-first-issues). It must report what it
-dropped.
+```bash
+spool import har capture.har -o fixtures/api.hif.json
+```
+
+The command reports exactly what it dropped, and redacts by default.
 
 ## From hand-rolled mocks
 

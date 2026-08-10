@@ -55,6 +55,20 @@ open("fixtures/users.hif.json", "w").write(transport.to_json())
 print(transport.redaction_summary())   # never claims the fixture is safe
 ```
 
+## Serving a fixture over HTTP
+
+For code you cannot instrument — another process, a container, a language with
+no adapter:
+
+```python
+from spool.serve import serve_fixture
+
+with serve_fixture(fixture, port=0) as server:
+    run_tests(server.url)
+```
+
+Or from the CLI, `spool serve`. See [docs/serving.md](../../docs/serving.md).
+
 ## Public API
 
 Everything in `spool.__all__` is public and follows semantic versioning.

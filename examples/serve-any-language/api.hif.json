@@ -1,0 +1,80 @@
+{
+  "hif": "1.0",
+  "interactions": [
+    {
+      "id": "get-user",
+      "request": {
+        "method": "GET",
+        "url": "https://api.example.com/v1/users/7"
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "content-type",
+            "application/json"
+          ]
+        ],
+        "body": {
+          "encoding": "json",
+          "json": {
+            "id": 7,
+            "name": "Ada"
+          }
+        }
+      },
+      "replay": {
+        "times": "unlimited"
+      }
+    },
+    {
+      "id": "create",
+      "request": {
+        "method": "POST",
+        "url": "https://api.example.com/v1/users",
+        "body": {
+          "encoding": "json",
+          "json": {
+            "name": "Grace"
+          }
+        }
+      },
+      "response": {
+        "status": 201,
+        "headers": [
+          [
+            "location",
+            "/v1/users/8"
+          ]
+        ]
+      }
+    },
+    {
+      "id": "binary",
+      "request": {
+        "method": "GET",
+        "url": "https://api.example.com/v1/logo.png"
+      },
+      "response": {
+        "status": 200,
+        "headers": [
+          [
+            "content-type",
+            "image/png"
+          ]
+        ],
+        "body": {
+          "encoding": "base64",
+          "base64": "iVBORw0KGgo="
+        }
+      },
+      "replay": {
+        "times": "unlimited"
+      }
+    }
+  ],
+  "meta": {
+    "name": "serve-any-language",
+    "description": "A demo fixture served over HTTP so a client with no Spool library can replay it."
+  }
+}

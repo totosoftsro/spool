@@ -8,6 +8,7 @@ import json
 import re
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Sequence, Tuple
 
+from ._text import q
 from .canonical import canonicalize, find_lossy_numbers
 from .errors import HifStructuralError
 
@@ -24,7 +25,7 @@ def or_empty(body: Optional[Dict[str, Any]]) -> Dict[str, Any]:
 def decode_base64(text: str, at: Optional[str] = None) -> bytes:
     if not _BASE64.match(text) or len(text) % 4 != 0:
         raise HifStructuralError(
-            "Invalid base64: the standard RFC 4648 section 4 alphabet with padding is "
+            "Invalid base64: the standard RFC 4648 §4 alphabet with padding is "
             "required, and whitespace is not permitted",
             at,
         )
@@ -49,7 +50,7 @@ def body_bytes(body: Dict[str, Any]) -> bytes:
         return canonicalize(body["json"]).encode("utf-8")
     if encoding == "base64":
         return decode_base64(str(body["base64"]))
-    raise HifStructuralError(f"Unknown body encoding {encoding!r}")
+    raise HifStructuralError(f"Unknown body encoding {q(encoding)}")
 
 
 def body_text(body: Dict[str, Any]) -> Optional[str]:
@@ -63,7 +64,7 @@ def body_text(body: Dict[str, Any]) -> Optional[str]:
         return canonicalize(body["json"])
     if encoding == "base64":
         return decode_utf8_strict(decode_base64(str(body["base64"])))
-    raise HifStructuralError(f"Unknown body encoding {encoding!r}")
+    raise HifStructuralError(f"Unknown body encoding {q(encoding)}")
 
 
 _MISSING = object()
@@ -132,7 +133,7 @@ def encode_body(
                     detail = ", ".join(f"{n.literal} would become {n.canonical}" for n in lossy)
                     on_warning(
                         f"Body stored as text instead of json: {len(lossy)} number literal(s) do not "
-                        f"survive an IEEE 754 round trip ({detail}). See spec section 12.3."
+                        f"survive an IEEE 754 round trip ({detail}). See spec §12.3."
                     )
             else:
                 return _with_content_type({"encoding": "json", "json": parsed}, content_type)
@@ -172,7 +173,7 @@ def validate_body(body: Any, at: str) -> Dict[str, Any]:
     if encoding is None:
         raise HifStructuralError('Body requires an "encoding" member', at)
     raise HifStructuralError(
-        f"Unknown body encoding {encoding!r}; expected empty, text, json or base64", at
+        f"Unknown body encoding {q(encoding)}; expected empty, text, json or base64", at
     )
 
 

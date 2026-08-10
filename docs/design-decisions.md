@@ -203,6 +203,58 @@ Two implementations with subtly different `spool lint` behaviour would be worse
 than one implementation, because people would learn one and be wrong about the
 other. `conformance/cross-check.sh` compares the command surfaces in CI.
 
+## Why `spool serve` maps onto an origin instead of guessing
+
+An incoming request to the server arrives as `GET /v1/users/7` — no scheme, no
+host. To match it against a fixture recorded from `https://api.example.com`, the
+server has to supply the missing origin.
+
+It infers one when every interaction shares it, and **refuses** when they do
+not. Silently picking the first would make requests intended for a second host
+match the wrong recordings, and that failure is invisible: the test passes
+against the wrong data.
+
+`spool proxy` has no such problem, because a client configured with a proxy
+sends the full URL. That is the entire reason both commands exist rather than
+one.
+
+## Why the proxy will not do HTTPS
+
+Intercepting a CONNECT tunnel requires generating a certificate for the target
+host and persuading the client to trust the CA that signed it. Every MITM proxy
+does this, and it means installing a certificate authority on a developer
+machine or in CI.
+
+That is a bigger security decision than a test tool should make on a user's
+behalf, and a CA installed for testing has a way of outliving the test. So the
+proxy declines, explains why, and points at `serve` — which reaches the same
+outcome with no certificate at all, because the client never negotiates TLS.
+
+Refusing a feature outright is better than shipping it with a warning nobody
+reads.
+
+## Why an unmatched request over HTTP is 551
+
+A recorded API can itself return 404, 500, or almost anything. If Spool reported
+a missing interaction with one of those, a test asserting `status == 404` could
+pass *because the fixture was incomplete* — the exact failure the explanation
+engine exists to prevent, reintroduced at the transport layer.
+
+551 is outside the registered range, so it cannot collide with an application
+status. The body carries the full §13 explanation, and `x-spool-error` marks it
+for machine consumption.
+
+## Why HAR import prints a report you cannot turn off
+
+HAR is a browser log; HIF is a replay specification. Converting one to the other
+drops page records, cache entries, connection details and the per-phase timing
+breakdown, and it invents nothing to replace the matching rules HAR does not
+have.
+
+A converter that stayed quiet about that would be claiming a fidelity it does
+not deliver. The report goes to stderr so it does not corrupt a piped fixture,
+and it is not suppressible.
+
 ## What was deliberately left out of 1.0
 
 - **Streaming.** Server-sent events and chunked responses can be recorded as
@@ -214,8 +266,5 @@ other. `conformance/cross-check.sh` compares the command surfaces in CI.
   compute responses. "POST then GET returns what was posted" is two
   interactions, not a behaviour. Adding a rules engine would make the format
   much larger and much harder to implement twice.
-- **A record/replay proxy.** Would make Spool usable from languages with no
-  adapter on day one, and is on the roadmap — but shipping the claim before the
-  code would have been dishonest, so the README says it does not exist yet.
 - **Contract testing.** A different problem with good existing tools. HIF
   fixtures can feed one; the negotiation protocol is out of scope.

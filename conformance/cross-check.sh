@@ -127,6 +127,89 @@ PYEOF
   compare "redact/$name serialized output" "$WORK/ts.json" "$WORK/py.json"
 done
 
+# --- lint output ------------------------------------------------------------
+# Warning text is user-facing and must be identical. This section exists because
+# a spec-section citation was once rendered "§6.1" in one implementation and
+# "section 6.1" in the other, which nothing else would have caught.
+
+for case_file in cases/structural/*.json cases/version/*.json; do
+  name=$(basename "$case_file" .json)
+  if "$PY_BIN" - "$case_file" "$WORK" <<'PYEOF'
+import json, sys, pathlib
+case = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+(pathlib.Path(sys.argv[2]) / "fixture.hif.json").write_text(
+    json.dumps(case["document"]), encoding="utf-8"
+)
+PYEOF
+  then :; else echo "helper failed for $case_file"; fail=1; continue; fi
+
+  set +e
+  ts lint "$WORK/fixture.hif.json" > "$WORK/ts.txt" 2>&1
+  py lint "$WORK/fixture.hif.json" > "$WORK/py.txt" 2>&1
+  set -e
+  # Paths appear in the output; both read the same file, so no normalisation is
+  # needed beyond stripping the temporary directory.
+  compare "lint/$name output" "$WORK/ts.txt" "$WORK/py.txt"
+done
+
+# --- HAR import ---------------------------------------------------------------
+# The converted fixture must be byte-identical apart from the recorder name,
+# which each implementation is supposed to set to itself.
+
+if [[ -f fixtures/sample.har ]]; then
+  ts import har fixtures/sample.har -o "$WORK/ts.json" 2> "$WORK/ts.log"
+  py import har fixtures/sample.har -o "$WORK/py.json" 2> "$WORK/py.log"
+  sed 's/spool-typescript/spool-IMPL/' "$WORK/ts.json" > "$WORK/ts.norm"
+  sed 's/spool-python/spool-IMPL/' "$WORK/py.json" > "$WORK/py.norm"
+  compare "import har converted fixture" "$WORK/ts.norm" "$WORK/py.norm"
+
+  sed 's/spool-typescript/spool-IMPL/' "$WORK/ts.log" > "$WORK/ts.lognorm"
+  sed 's/spool-python/spool-IMPL/' "$WORK/py.log" > "$WORK/py.lognorm"
+  compare "import har report" "$WORK/ts.lognorm" "$WORK/py.lognorm"
+fi
+
+# --- serve ---------------------------------------------------------------------
+# Both servers must answer the same request identically, including the 551
+# mismatch body. This is the surface that languages without an adapter use, so a
+# divergence here is a divergence for every one of them.
+
+serve_probe() {
+  local impl="$1" port="$2" out="$3"
+  if [[ "$impl" == "ts" ]]; then
+    node "$TS_DIST/cli.js" serve fixtures/serve.hif.json --port "$port" > /dev/null 2>&1 &
+  else
+    PYTHONPATH="$PY_SRC" "$PY_BIN" -m spool.cli serve fixtures/serve.hif.json --port "$port" \
+      > /dev/null 2>&1 &
+  fi
+  local pid=$!
+  # Poll a path the fixture does not contain: any HTTP answer means the server
+  # is up, and unlike a recorded path it consumes no play count. Probing with a
+  # recorded request would deplete it before the real comparison runs.
+  for _ in $(seq 1 100); do
+    if curl -sS -o /dev/null "http://127.0.0.1:$port/__spool_ready__" 2>/dev/null; then break; fi
+    sleep 0.1
+  done
+  {
+    echo "--- matched"
+    # Header names are case-insensitive in HTTP and the two servers capitalise
+    # differently; the comparison is about values, so names are lowercased.
+    # BSD awk is used rather than sed, which has no portable \L.
+    curl -sS -D - "http://127.0.0.1:$port/v1/users/7" \
+      | awk '{ if (match($0, /^[A-Za-z-]+:/)) print tolower(substr($0,1,RLENGTH)) substr($0,RLENGTH+1); else print }' \
+      | grep -viE '^(date|connection|keep-alive|server|content-length):'
+    echo "--- unmatched"
+    curl -sS -o - -w '\nstatus=%{http_code}\n' "http://127.0.0.1:$port/v1/nope"
+  } > "$out" 2>&1
+  kill "$pid" 2>/dev/null || true
+  wait "$pid" 2>/dev/null || true
+}
+
+if [[ -f fixtures/serve.hif.json ]] && command -v curl > /dev/null; then
+  serve_probe ts 18081 "$WORK/ts.txt"
+  serve_probe py 18082 "$WORK/py.txt"
+  compare "serve responses" "$WORK/ts.txt" "$WORK/py.txt"
+fi
+
 # --- CLI surface ----------------------------------------------------------
 # The two CLIs must offer the same commands. Comparing the Usage block catches
 # a command added to one implementation and not the other.

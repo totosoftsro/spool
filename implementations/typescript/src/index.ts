@@ -85,6 +85,14 @@ export type { DeliverableResponse, Play, PlayerOptions } from './player.js';
 export { Recorder } from './recorder.js';
 export type { CapturedRequest, CapturedResponse, RecorderOptions } from './recorder.js';
 
+// --- servers ---------------------------------------------------------------
+export { inferOrigin, originsOf, proxyFixture, recordServe, serveFixture } from './serve.js';
+export type { RecordServeOptions, RecordingServer, RunningServer, ServeOptions } from './serve.js';
+
+// --- HAR import ------------------------------------------------------------
+export { importHar, importHarText } from './har.js';
+export type { HarImportOptions, HarImportResult } from './har.js';
+
 // --- redaction -------------------------------------------------------------
 export {
   DEFAULT_HEADERS,

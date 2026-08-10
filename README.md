@@ -122,6 +122,29 @@ A fixture is readable JSON, and you can write one by hand in under a minute:
 
 That is a complete, valid fixture. Everything else in the format is opt-in.
 
+## Using it from a language with no library
+
+You do not need an adapter, or even a Spool package in your language. Serve the
+fixture as a plain HTTP origin and point your client's base URL at it:
+
+```bash
+npx spool serve fixtures/users.hif.json
+#  spool serving 3 interaction(s) at http://127.0.0.1:8080
+#  Requests are matched as if sent to https://api.example.com
+#
+#    export API_BASE_URL=http://127.0.0.1:8080
+```
+
+Every request is matched by the same engine, with the same rules. An unmatched
+request answers **551** with the full explanation in the body, so a Go, Rust or
+Java test gets the same diagnosis as a TypeScript one.
+
+`spool proxy` does the same over `HTTP_PROXY` for plain-HTTP traffic, which also
+handles fixtures spanning several origins. It deliberately does **not** serve
+https through a CONNECT tunnel: that needs a man-in-the-middle certificate
+authority, which is not something a test tool should install on your machine.
+`serve` covers https origins without one.
+
 ## What you get beyond "it replays"
 
 | | |
@@ -140,8 +163,8 @@ That is a complete, valid fixture. Everything else in the format is opt-in.
 | Path | What is in it |
 | --- | --- |
 | [`specification/`](./specification/) | The HIF 1.0 specification and JSON Schema. Independently implementable. |
-| [`implementations/typescript/`](./implementations/typescript/) | `@spool/hif` — core, `fetch` adapter, CLI. Zero runtime dependencies. |
-| [`implementations/python/`](./implementations/python/) | `spool-hif` — core, `httpx` and `requests` adapters, CLI. Zero required runtime dependencies. |
+| [`implementations/typescript/`](./implementations/typescript/) | `@spool/hif` — core, `fetch` and `node:http` adapters, CLI with `serve`/`proxy`. Zero runtime dependencies. |
+| [`implementations/python/`](./implementations/python/) | `spool-hif` — core, `httpx` and `requests` adapters, CLI with `serve`/`proxy`. Zero required runtime dependencies. |
 | [`conformance/`](./conformance/) | Language-neutral test cases every implementation must pass, plus a cross-implementation parity check. |
 | [`examples/`](./examples/) | Runnable Vitest, pytest, and one-fixture-two-languages examples. |
 | [`docs/`](./docs/) | Guides, and the reasoning behind the design decisions. |
@@ -150,8 +173,9 @@ That is a complete, valid fixture. Everything else in the format is opt-in.
 
 | Language | Package | Conformance level | Adapters |
 | --- | --- | --- | --- |
-| TypeScript / JavaScript | `@spool/hif` | Full | global `fetch` |
+| TypeScript / JavaScript | `@spool/hif` | Full | global `fetch`, `node:http` / `node:https` (axios, got, node-fetch v2, superagent) |
 | Python | `spool-hif` | Full | `httpx`, `requests` |
+| Any other language | — | — | `spool serve` / `spool proxy`, no library needed |
 
 Conformance levels are defined in [§15](./specification/hif-1.0.md#15-conformance)
 and are asserted by the suite, not declared on trust. Ports to Go, Rust, Java and
@@ -168,6 +192,9 @@ spool scan fixtures/                  # report suspected secrets
 spool redact fixtures/old.hif.json    # apply redaction to an existing fixture
 spool explain fixtures/users.hif.json request.json
 spool diff before.hif.json after.hif.json
+spool import har capture.har          # convert a browser HAR, reporting what it drops
+spool serve fixtures/users.hif.json   # replay over HTTP, for any language
+spool proxy fixtures/users.hif.json   # replay via HTTP_PROXY
 ```
 
 ## Honest limitations
@@ -181,9 +208,6 @@ spool diff before.hif.json after.hif.json
   `preserveBytes`.
 - **No streaming.** Server-sent events and chunked responses can be recorded as
   their concatenated bytes; chunk boundaries and their timing are lost.
-- **The `fetch` adapter does not cover `http.request`.** Clients that bypass
-  global fetch — axios on Node, node-fetch v2, got — need an adapter that does
-  not exist yet. It is a well-scoped contribution.
 - **HTTP only.** WebSockets and gRPC are out of scope for 1.0.
 
 ## Contributing

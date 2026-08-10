@@ -22,6 +22,7 @@ from __future__ import annotations
 import re
 from typing import List
 
+from ._text import q
 from .errors import HifStructuralError
 
 _CLASS_D = "0-9"
@@ -46,7 +47,7 @@ class CompiledPattern:
         if len(subject) > MAX_SUBJECT:
             raise HifStructuralError(
                 f"Regex subject of {len(subject)} characters exceeds the "
-                f"{MAX_SUBJECT}-character bound of spec section 7.6.2"
+                f"{MAX_SUBJECT}-character bound of spec §7.6.2"
             )
         return self._compiled.match(subject) is not None
 
@@ -57,13 +58,13 @@ def compile_portable_regex(pattern: str) -> CompiledPattern:
     try:
         compiled = re.compile(f"(?:{translated})\\Z")
     except re.error as exc:
-        raise HifStructuralError(f"Regex {pattern!r} is not valid: {exc}") from exc
+        raise HifStructuralError(f"Regex {q(pattern)} is not valid: {exc}") from exc
     return CompiledPattern(pattern, compiled)
 
 
 def _reject(pattern: str, why: str) -> None:
     raise HifStructuralError(
-        f"Regex {pattern!r} uses {why}, which the HIF regex subset (spec section 7.6.2) excludes"
+        f"Regex {q(pattern)} uses {why}, which the HIF regex subset (spec §7.6.2) excludes"
     )
 
 
@@ -81,7 +82,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
         # ---- escape sequences -------------------------------------------
         if ch == "\\":
             if i + 1 >= length:
-                raise HifStructuralError(f"Regex {pattern!r} ends with a trailing backslash")
+                raise HifStructuralError(f"Regex {q(pattern)} ends with a trailing backslash")
             nxt = pattern[i + 1]
             i += 2
 
@@ -168,7 +169,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
 
         if ch == ")":
             if group_depth == 0:
-                raise HifStructuralError(f'Regex {pattern!r} has an unmatched ")"')
+                raise HifStructuralError(f'Regex {q(pattern)} has an unmatched ")"')
             group_depth -= 1
             out.append(")")
             quantifiable = True
@@ -177,7 +178,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
 
         if ch in "*+?":
             if not quantifiable:
-                raise HifStructuralError(f'Regex {pattern!r} has a quantifier "{ch}" with nothing to repeat')
+                raise HifStructuralError(f'Regex {q(pattern)} has a quantifier "{ch}" with nothing to repeat')
             out.append(ch)
             i += 1
             if i < length and pattern[i] == "?":
@@ -191,17 +192,17 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
             close = pattern.find("}", i)
             if close == -1:
                 raise HifStructuralError(
-                    f'Regex {pattern!r} has an unterminated "{{"; write "\\{{" for a literal brace'
+                    f'Regex {q(pattern)} has an unterminated "{{"; write "\\{{" for a literal brace'
                 )
             inner = pattern[i + 1 : close]
             if not _COUNTED.match(inner):
                 raise HifStructuralError(
-                    f'Regex {pattern!r} has an invalid counted quantifier "{{{inner}}}"; '
+                    f'Regex {q(pattern)} has an invalid counted quantifier "{{{inner}}}"; '
                     'write "\\{" for a literal brace'
                 )
             if not quantifiable:
                 raise HifStructuralError(
-                    f'Regex {pattern!r} has a quantifier "{{{inner}}}" with nothing to repeat'
+                    f'Regex {q(pattern)} has a quantifier "{{{inner}}}" with nothing to repeat'
                 )
             out.append("{" + inner + "}")
             i = close + 1
@@ -227,7 +228,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
 
         if ch in "}]":
             raise HifStructuralError(
-                f'Regex {pattern!r} has an unmatched "{ch}"; write "\\{ch}" for a literal'
+                f'Regex {q(pattern)} has an unmatched "{ch}"; write "\\{ch}" for a literal'
             )
 
         out.append(re.escape(ch))
@@ -235,7 +236,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
         i += 1
 
     if in_class:
-        raise HifStructuralError(f"Regex {pattern!r} has an unterminated character class")
+        raise HifStructuralError(f"Regex {q(pattern)} has an unterminated character class")
     if group_depth:
-        raise HifStructuralError(f'Regex {pattern!r} has an unclosed "("')
+        raise HifStructuralError(f'Regex {q(pattern)} has an unclosed "("')
     return "".join(out)

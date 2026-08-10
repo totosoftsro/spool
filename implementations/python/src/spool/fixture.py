@@ -11,6 +11,7 @@ import json
 import re
 from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Set
 
+from ._text import q
 from .body import validate_body
 from .errors import HifStructuralError
 from .placeholder import parse_placeholder
@@ -22,7 +23,10 @@ SUPPORTED_VERSION = "1.0"
 _SUPPORTED_MAJOR = 1
 _SUPPORTED_MINOR = 0
 
+#: The pattern is anchored with \A and \Z here, but reported as ^...$ so that
+#: the message matches the TypeScript implementation byte for byte.
 _ID_PATTERN = re.compile(r"\A[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
+_ID_PATTERN_TEXT = "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
 _VERSION_PATTERN = re.compile(r"\A(\d+)\.(\d+)\Z")
 _INLINE_REGEX = re.compile(r"\{\{regex:((?:[^}]|\}(?!\}))*)\}\}")
 
@@ -67,18 +71,18 @@ def validate_fixture(document: Any, source: str = "<memory>") -> LoadResult:
         raise HifStructuralError('Missing required member "hif"')
     match = _VERSION_PATTERN.match(version)
     if not match:
-        raise HifStructuralError(f'Invalid "hif" version {version!r}; expected MAJOR.MINOR')
+        raise HifStructuralError(f'Invalid "hif" version {q(version)}; expected MAJOR.MINOR')
     major, minor = int(match.group(1)), int(match.group(2))
     if major != _SUPPORTED_MAJOR:
         raise HifStructuralError(
             f"Fixture declares HIF {version}, but this implementation supports "
-            f"{_SUPPORTED_MAJOR}.x. Spec section 11.2 requires rejecting a differing major "
+            f"{_SUPPORTED_MAJOR}.x. Spec §11.2 requires rejecting a differing major "
             "version rather than guessing."
         )
     if minor > _SUPPORTED_MINOR:
         warnings.append(
             f"Fixture declares HIF {version}; this implementation targets {SUPPORTED_VERSION}. "
-            "Unrecognised members will be ignored (spec section 11.2)."
+            "Unrecognised members will be ignored (spec §11.2)."
         )
 
     interactions = document.get("interactions")
@@ -119,10 +123,10 @@ def _validate_interaction(raw: Any, index: int, ids: Set[str], warnings: List[st
         identifier = raw["id"]
         if not isinstance(identifier, str) or not _ID_PATTERN.match(identifier):
             raise HifStructuralError(
-                f"Invalid id {identifier!r}; must match {_ID_PATTERN.pattern}", at
+                f"Invalid id {q(identifier)}; must match {_ID_PATTERN_TEXT}", at
             )
         if identifier in ids:
-            raise HifStructuralError(f"Duplicate interaction id {identifier!r}", at)
+            raise HifStructuralError(f"Duplicate interaction id {q(identifier)}", at)
         ids.add(identifier)
 
     _validate_request(raw.get("request"), f"{at}.request", warnings)
@@ -170,7 +174,7 @@ def _validate_request(raw: Any, at: str, warnings: List[str]) -> None:
         # Section 6.1 requires linters to flag this: a lowercase known method
         # silently fails to match live traffic.
         warnings.append(
-            f"{at}: method {method!r} is a known method stored in lowercase; spec section 6.1 "
+            f"{at}: method {q(method)} is a known method stored in lowercase; spec §6.1 "
             "requires uppercase and this will not match live requests."
         )
 
@@ -180,7 +184,7 @@ def _validate_request(raw: Any, at: str, warnings: List[str]) -> None:
     normalize_url(url)
     if "#" in url:
         warnings.append(
-            f"{at}: url contains a fragment, which spec section 6.2 says must not be stored; "
+            f"{at}: url contains a fragment, which spec §6.2 says must not be stored; "
             "it will be ignored."
         )
 
@@ -197,7 +201,7 @@ def _validate_response(raw: Any, at: str, warnings: List[str]) -> None:
 
     status = raw.get("status")
     if isinstance(status, bool) or not isinstance(status, int) or not 100 <= status <= 599:
-        raise HifStructuralError(f'Response "status" must be an integer in 100..599, got {status!r}', at)
+        raise HifStructuralError(f'Response "status" must be an integer in 100..599, got {q(status)}', at)
 
     _validate_header_list(raw.get("headers"), f"{at}.headers")
     if "body" in raw and raw["body"] is not None:
@@ -262,7 +266,7 @@ def _validate_match(raw: Any, at: str, warnings: List[str]) -> None:
     for name in ("method", "scheme", "host", "port", "path"):
         value = raw.get(name)
         if value is not None and value not in ("exact", "ignore"):
-            raise HifStructuralError(f'match.{name} must be "exact" or "ignore", got {value!r}', at)
+            raise HifStructuralError(f'match.{name} must be "exact" or "ignore", got {q(value)}', at)
 
     query = raw.get("query")
     if query is not None:
@@ -306,7 +310,7 @@ def _validate_replay(raw: Any, at: str, warnings: List[str]) -> None:
         return
     if isinstance(times, bool) or not isinstance(times, int) or times < 1:
         raise HifStructuralError(
-            f'replay.times must be a positive integer or "unlimited", got {times!r}', at
+            f'replay.times must be a positive integer or "unlimited", got {q(times)}', at
         )
 
 
@@ -326,7 +330,7 @@ def _validate_fault(raw: Any, at: str, warnings: List[str]) -> None:
     fault_type = raw.get("type")
     if fault_type not in _FAULT_TYPES:
         raise HifStructuralError(
-            f"Unknown fault type {fault_type!r}; expected one of {', '.join(sorted(_FAULT_TYPES))}", at
+            f"Unknown fault type {q(fault_type)}; expected one of {', '.join(sorted(_FAULT_TYPES))}", at
         )
     after = raw.get("afterMs")
     if after is not None and (isinstance(after, bool) or not isinstance(after, (int, float)) or after < 0):
@@ -355,8 +359,8 @@ def _require_object(raw: Any, at: str) -> None:
 
 def _require_enum(value: Any, allowed: Sequence[str], at: str) -> None:
     if value is not None and value not in allowed:
-        rendered = ", ".join(repr(a) for a in allowed)
-        raise HifStructuralError(f"Expected one of {rendered}, got {value!r}", at)
+        rendered = ", ".join(q(a) for a in allowed)
+        raise HifStructuralError(f"Expected one of {rendered}, got {q(value)}", at)
 
 
 def _require_string_list(value: Any, at: str) -> None:

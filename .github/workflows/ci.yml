@@ -97,8 +97,9 @@ jobs:
 
       - name: Cross-implementation parity
         # Both implementations passing the spec is not the same as the two
-        # agreeing with each other on everything the spec leaves open, notably
-        # the rendered mismatch report.
+        # agreeing with each other on everything the spec leaves open: the
+        # rendered mismatch report, lint warning text, HAR import output, and
+        # the responses `spool serve` puts on a real socket.
         run: ./conformance/cross-check.sh
 
   examples:
@@ -135,6 +136,11 @@ jobs:
 
       - name: Cross-language example
         run: ./examples/cross-language/run.sh
+
+      - name: Serve example (no Spool library in the client)
+        # Proves the claim that a language with no adapter can replay a fixture:
+        # this uses only curl against `spool serve`.
+        run: ./examples/serve-any-language/run.sh
 
   spec-links:
     name: Specification cross-references
