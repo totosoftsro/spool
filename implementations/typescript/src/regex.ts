@@ -32,8 +32,15 @@ export interface CompiledPattern {
   test(subject: string): boolean;
 }
 
-/** Longest subject a compiled pattern will be run against, per §7.6.2's no-hang rule. */
-const MAX_SUBJECT = 100_000;
+/**
+ * Longest subject a compiled pattern will be run against (§7.6.2).
+ *
+ * This is a secondary measure only. Bounding length does not prevent exponential
+ * backtracking — `(a+)+b` against 40 characters already runs indefinitely — which
+ * is why the structural rule forbidding a quantifier on a group is the real
+ * protection. Header values and JSON strings do not legitimately reach this size.
+ */
+const MAX_SUBJECT = 8192;
 
 /**
  * Validate a pattern against the §7.6.2 subset and compile it, anchored.
@@ -75,6 +82,12 @@ function translate(pattern: string): string {
   /** True immediately after emitting something a quantifier may follow. */
   let quantifiable = false;
   let groupDepth = 0;
+  /**
+   * True when the last thing emitted was a closing `)`. §7.6.2 forbids a
+   * quantifier on a group, because a quantified group whose body is ambiguous is
+   * what makes backtracking exponential.
+   */
+  let afterGroup = false;
 
   for (let i = 0; i < pattern.length; i++) {
     const ch = pattern[i]!;
@@ -92,6 +105,7 @@ function translate(pattern: string): string {
       if (next === 'p' || next === 'P') reject(pattern, 'Unicode property escapes');
       if (next === 'k') reject(pattern, 'named backreferences');
 
+      afterGroup = false;
       if (inClass) {
         if (next === 'd') out += CLASS_D;
         else if (next === 'w') out += CLASS_W;
@@ -122,6 +136,7 @@ function translate(pattern: string): string {
       if (ch === ']') {
         inClass = false;
         quantifiable = true;
+        afterGroup = false;
       }
       continue;
     }
@@ -129,6 +144,7 @@ function translate(pattern: string): string {
     // ---- structure --------------------------------------------------------
     if (ch === '[') {
       inClass = true;
+      afterGroup = false;
       out += ch;
       // A `^` or `]` immediately after `[` is literal; copying them here keeps
       // the class-termination check below from firing on `[]]`.
@@ -151,6 +167,7 @@ function translate(pattern: string): string {
       groupDepth++;
       out += '(';
       quantifiable = false;
+      afterGroup = false;
       continue;
     }
 
@@ -159,6 +176,7 @@ function translate(pattern: string): string {
       groupDepth--;
       out += ')';
       quantifiable = true;
+      afterGroup = true;
       continue;
     }
 
@@ -166,6 +184,7 @@ function translate(pattern: string): string {
       if (!quantifiable) {
         throw new HifStructuralError(`Regex ${JSON.stringify(pattern)} has a quantifier "${ch}" with nothing to repeat`);
       }
+      if (afterGroup) rejectQuantifiedGroup(pattern, ch);
       out += ch;
       const after = pattern[i + 1];
       if (after === '?') reject(pattern, 'lazy quantifiers');
@@ -190,6 +209,7 @@ function translate(pattern: string): string {
       if (!quantifiable) {
         throw new HifStructuralError(`Regex ${JSON.stringify(pattern)} has a quantifier "{${inner}}" with nothing to repeat`);
       }
+      if (afterGroup) rejectQuantifiedGroup(pattern, `{${inner}}`);
       out += `{${inner}}`;
       i = close;
       const after = pattern[i + 1];
@@ -202,6 +222,7 @@ function translate(pattern: string): string {
     if (ch === '|' || ch === '^' || ch === '$') {
       out += ch;
       quantifiable = false;
+      afterGroup = false;
       continue;
     }
 
@@ -209,6 +230,7 @@ function translate(pattern: string): string {
       // §7.6.2: `.` matches any character except U+000A.
       out += '[^\\n]';
       quantifiable = true;
+      afterGroup = false;
       continue;
     }
 
@@ -220,11 +242,21 @@ function translate(pattern: string): string {
 
     out += escapeLiteral(ch);
     quantifiable = true;
+    afterGroup = false;
   }
 
   if (inClass) throw new HifStructuralError(`Regex ${JSON.stringify(pattern)} has an unterminated character class`);
   if (groupDepth > 0) throw new HifStructuralError(`Regex ${JSON.stringify(pattern)} has an unclosed "("`);
   return out;
+}
+
+function rejectQuantifiedGroup(pattern: string, quantifier: string): never {
+  throw new HifStructuralError(
+    `Regex ${JSON.stringify(pattern)} applies the quantifier "${quantifier}" to a group, which the HIF ` +
+      'regex subset (spec §7.6.2) excludes. A quantified group is what makes backtracking exponential: ' +
+      '"(a+)+b" never finishes against a run of "a" characters. Rewrite without the group, or match this ' +
+      'value with a placeholder other than {{regex:...}}.',
+  );
 }
 
 /** Literal characters are re-escaped so the host engine cannot reinterpret them. */

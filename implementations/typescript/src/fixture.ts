@@ -32,6 +32,36 @@ const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 
 const KNOWN_METHODS = new Set(['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']);
 
+/**
+ * §6.3.1. An RFC 9110 `token`, which is what a field name must be.
+ */
+const TOKEN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+
+/**
+ * §6.3.1. CR, LF, NUL and the other C0 controls except HTAB are forbidden in a
+ * field value and in a reason phrase.
+ *
+ * A value containing CRLF would terminate the header block early when delivered,
+ * letting a fixture inject headers and a body of its own — HTTP response
+ * splitting carried in a data file. Fixtures come from repositories, pull
+ * requests and HAR conversions, so they are untrusted input.
+ */
+// eslint-disable-next-line no-control-regex
+const FORBIDDEN_IN_FIELD_VALUE = /[\u0000-\u0008\u000A-\u001F\u007F]/;
+
+function checkFieldValue(value: string, what: string, at: string): void {
+  const bad = FORBIDDEN_IN_FIELD_VALUE.exec(value);
+  if (bad) {
+    const code = bad[0].codePointAt(0)!;
+    throw new HifStructuralError(
+      `${what} contains U+${code.toString(16).toUpperCase().padStart(4, '0')}, which spec §6.3.1 forbids. ` +
+        'CR, LF, NUL and other control characters are rejected because delivering them would let this ' +
+        'fixture inject headers into a response.',
+      at,
+    );
+  }
+}
+
 const FAULT_TYPES = new Set([
   'connection-refused',
   'connection-reset',
@@ -205,6 +235,12 @@ function validateResponse(raw: unknown, at: string, warnings: string[]): void {
   if (typeof status !== 'number' || !Number.isInteger(status) || status < 100 || status > 599) {
     throw new HifStructuralError(`Response "status" must be an integer in 100..599, got ${JSON.stringify(status)}`, at);
   }
+  if (res['statusText'] !== undefined) {
+    if (typeof res['statusText'] !== 'string') {
+      throw new HifStructuralError('Response "statusText" must be a string', at);
+    }
+    checkFieldValue(res['statusText'], 'Reason phrase', at);
+  }
   validateHeaderList(res['headers'], `${at}.headers`);
   if (res['body'] !== undefined) validateBody(res['body'], `${at}.body`);
 }
@@ -217,9 +253,16 @@ function validateHeaderList(raw: unknown, at: string): void {
       throw new HifStructuralError('Header entry must be [name, value] or [name, null, base64]', `${at}[${i}]`);
     }
     if (typeof entry[0] !== 'string') throw new HifStructuralError('Header name must be a string', `${at}[${i}]`);
+    if (!TOKEN.test(entry[0])) {
+      throw new HifStructuralError(
+        `Header name ${JSON.stringify(entry[0])} is not an RFC 9110 token (spec §6.3.1)`,
+        `${at}[${i}]`,
+      );
+    }
     if (entry.length === 2 && typeof entry[1] !== 'string') {
       throw new HifStructuralError('Header value must be a string', `${at}[${i}]`);
     }
+    if (entry.length === 2) checkFieldValue(entry[1] as string, 'Header value', `${at}[${i}]`);
     if (entry.length === 3 && (entry[1] !== null || typeof entry[2] !== 'string')) {
       throw new HifStructuralError('A three-element header entry must be [name, null, base64]', `${at}[${i}]`);
     }

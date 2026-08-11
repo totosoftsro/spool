@@ -233,3 +233,102 @@ def test_proxy_explains_that_connect_is_unsupported() -> None:
         assert "spool serve" in response
     finally:
         running.close()
+
+
+# ---------------------------------------------------------------------------
+# Robustness against a hostile or awkward fixture
+# ---------------------------------------------------------------------------
+
+
+def test_strips_the_body_from_statuses_that_must_not_carry_one() -> None:
+    """RFC 9110: 204, 304 and 1xx carry no content.
+
+    A fixture that says otherwise used to produce a message the client cannot
+    frame — on a keep-alive connection the body bytes are read as the start of
+    the next response. Node stripped it silently; this server did not, which was
+    both a protocol violation and a cross-language divergence.
+    """
+    no_body = {
+        "hif": "1.0",
+        "interactions": [
+            {
+                "id": f"s{status}",
+                "request": {"method": "GET", "url": f"https://x.test/s{status}"},
+                "response": {"status": status, "body": {"encoding": "text", "text": "MUST-NOT-APPEAR"}},
+            }
+            for status in (204, 304, 100)
+        ],
+    }
+    running = serve_fixture(no_body, port=0)
+    try:
+        for status in (204, 304):
+            code, headers, body = _get(f"{running.url}/s{status}")
+            assert code == status
+            assert body == b""
+            assert "content-length" not in {k.lower() for k in headers}
+    finally:
+        running.close()
+
+
+def test_rejects_a_request_body_beyond_the_bound() -> None:
+    """An unbounded read let any client hold the process's memory hostage."""
+    from spool.serve import MAX_REQUEST_BODY
+
+    fixture = {
+        "hif": "1.0",
+        "interactions": [
+            {
+                "request": {"method": "POST", "url": "https://x.test/upload"},
+                "response": {"status": 200},
+            }
+        ],
+    }
+    running = serve_fixture(fixture, port=0)
+    try:
+        # Claim a body far beyond the bound without sending it. The server must
+        # answer 413 rather than try to buffer what was claimed.
+        request = urllib.request.Request(
+            f"{running.url}/upload",
+            data=b"x" * 16,
+            method="POST",
+            headers={"content-length": str(MAX_REQUEST_BODY + 1)},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
+                code = response.status
+        except urllib.error.HTTPError as exc:
+            code = exc.code
+        assert code == 413
+    finally:
+        running.close()
+
+
+def test_reports_the_same_reason_phrase_as_node_for_an_unregistered_status() -> None:
+    """Node substitutes "unknown" for a falsy reason phrase and offers no way to
+    send an empty one, so this server matches it rather than inventing a third."""
+    fixture = {
+        "hif": "1.0",
+        "interactions": [
+            {"request": {"method": "GET", "url": "https://x.test/odd"}, "response": {"status": 599}}
+        ],
+    }
+    running = serve_fixture(fixture, port=0)
+    try:
+        raw = _raw(
+            running.port, "GET /odd HTTP/1.1\r\nHost: x\r\nConnection: close\r\n\r\n"
+        )
+        assert raw.split("\r\n")[0] == "HTTP/1.1 599 unknown"
+    finally:
+        running.close()
+
+
+def test_record_serve_refuses_a_non_http_origin() -> None:
+    """`urlopen` honours file:// and ftp://.
+
+    The origin comes from the operator rather than from a fixture, but a typo
+    should fail loudly instead of turning the recorder into a local-file reader.
+    """
+    from spool.serve import record_serve
+
+    with pytest.raises(HifStructuralError):
+        record_serve(origin="file:///etc/passwd", port=0)

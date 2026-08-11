@@ -17,7 +17,7 @@
  * needs no such trick.
  */
 
-import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
+import http, { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 
 import { deliverable, Player } from './player.js';
@@ -78,9 +78,25 @@ export function originsOf(fixture: Fixture): string[] {
   return [...origins].sort();
 }
 
+/**
+ * Largest request body the servers will buffer.
+ *
+ * These servers exist to replay fixtures in tests, so a body beyond this is
+ * either a mistake or an attempt to exhaust memory. Reading without a bound let
+ * any client hold the process's memory hostage.
+ */
+export const MAX_REQUEST_BODY = 32 * 1024 * 1024;
+
+class BodyTooLarge extends Error {}
+
 async function readBody(request: IncomingMessage): Promise<Uint8Array> {
   const chunks: Buffer[] = [];
-  for await (const chunk of request) chunks.push(chunk as Buffer);
+  let size = 0;
+  for await (const chunk of request) {
+    size += (chunk as Buffer).length;
+    if (size > MAX_REQUEST_BODY) throw new BodyTooLarge();
+    chunks.push(chunk as Buffer);
+  }
   return new Uint8Array(Buffer.concat(chunks));
 }
 
@@ -100,6 +116,31 @@ function headerPairs(request: IncomingMessage): Array<[string, string]> {
  * artefacts. Dropping them keeps `headers: { mode: "all" }` fixtures working
  * through the server exactly as they do in-process.
  */
+/**
+ * Statuses that must not carry content (RFC 9110 §6.4.1, §15.4.5).
+ *
+ * Node strips the body for these silently while Python's http.server does not,
+ * so both implementations now apply the rule explicitly. Emitting a body with a
+ * 204 produces a message a client cannot frame, and on a keep-alive connection
+ * the bytes are read as the start of the next response.
+ */
+function bodyForbidden(status: number): boolean {
+  return status === 204 || status === 304 || (status >= 100 && status < 200);
+}
+
+/**
+ * The reason phrase to send when the fixture does not supply one.
+ *
+ * Left to the two HTTP servers this differed: Node invents "unknown" for an
+ * unregistered code and Python invents an empty string.
+ */
+function defaultReason(status: number): string {
+  // Node's writeHead substitutes "unknown" for any falsy reason phrase and gives
+  // no way to send an empty one, so that is the value both implementations use
+  // for an unregistered code.
+  return http.STATUS_CODES[status] ?? 'unknown';
+}
+
 const TRANSPORT_HEADERS = new Set([
   'host',
   'connection',
@@ -139,7 +180,12 @@ function writeDeliverable(
     response.appendHeader(name, value);
   }
   response.statusCode = out.status;
-  if (out.statusText) response.statusMessage = out.statusText;
+  response.statusMessage = out.statusText || defaultReason(out.status);
+
+  if (bodyForbidden(out.status)) {
+    response.end();
+    return;
+  }
 
   if (truncated) {
     // §10 partial-response: send the truncated body then destroy the socket, so
@@ -152,6 +198,10 @@ function writeDeliverable(
 }
 
 function writeMismatch(response: ServerResponse, error: HifMatchError): void {
+  if (response.headersSent) {
+    response.socket?.destroy();
+    return;
+  }
   // 551 is outside the registered range on purpose: it cannot be confused with
   // a status the recorded API might itself return, so a test that asserts on
   // status codes will not mistake a Spool failure for an application response.
@@ -165,10 +215,21 @@ function writeMismatch(response: ServerResponse, error: HifMatchError): void {
 }
 
 function writeError(response: ServerResponse, status: number, message: string): void {
-  response.statusCode = status;
-  response.setHeader('content-type', 'text/plain; charset=utf-8');
-  response.setHeader('x-spool-error', 'server-error');
-  response.end(message);
+  // Anything here can throw if the response was already partly written, or if a
+  // previous assignment poisoned it — a fixture with a control character in its
+  // reason phrase used to reach `writeHead` from inside this very function. A
+  // failure to report an error must never become a failure of the process.
+  try {
+    if (!response.headersSent) {
+      response.statusCode = status;
+      response.statusMessage = defaultReason(status);
+      response.setHeader('content-type', 'text/plain; charset=utf-8');
+      response.setHeader('x-spool-error', 'server-error');
+    }
+    response.end(message);
+  } catch {
+    response.socket?.destroy();
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -223,9 +284,16 @@ export async function serveFixture(fixture: Fixture, options: ServeOptions = {})
         writeDeliverable(response, deliverable(play.response!, play.fault?.type === 'partial-response'), play.fault?.type === 'partial-response');
       } catch (err) {
         if (err instanceof HifMatchError) writeMismatch(response, err);
-        else writeError(response, 500, `spool: ${(err as Error).message}\n`);
+        else if (err instanceof Error && err.constructor.name === 'BodyTooLarge') {
+          writeError(response, 413, `spool: request body exceeds ${MAX_REQUEST_BODY} bytes\n`);
+        } else writeError(response, 500, `spool: ${(err as Error).message}\n`);
       }
-    })();
+    })().catch(() => {
+      // Last resort. Reaching here means even the error path failed, and the one
+      // thing that must not happen is the process exiting on an unhandled
+      // rejection and taking the whole test run with it.
+      response.socket?.destroy();
+    });
   });
 
   return listen(server, options, player);
@@ -297,9 +365,13 @@ export async function proxyFixture(fixture: Fixture, options: ServeOptions = {})
         writeDeliverable(response, deliverable(play.response!, play.fault?.type === 'partial-response'), play.fault?.type === 'partial-response');
       } catch (err) {
         if (err instanceof HifMatchError) writeMismatch(response, err);
-        else writeError(response, 500, `spool: ${(err as Error).message}\n`);
+        else if (err instanceof Error && err.constructor.name === 'BodyTooLarge') {
+          writeError(response, 413, `spool: request body exceeds ${MAX_REQUEST_BODY} bytes\n`);
+        } else writeError(response, 500, `spool: ${(err as Error).message}\n`);
       }
-    })();
+    })().catch(() => {
+      response.socket?.destroy();
+    });
   });
 
   server.on('connect', (_request, socket) => {
@@ -381,7 +453,9 @@ export async function recordServe(options: RecordServeOptions): Promise<Recordin
         recorder.recordFault({ method, url: target, headers: pairs, body }, 'connection-reset');
         writeError(response, 502, `spool: upstream request failed: ${(err as Error).message}\n`);
       }
-    })();
+    })().catch(() => {
+      response.socket?.destroy();
+    });
   });
 
   const running = await listen(server, options, null);

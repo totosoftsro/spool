@@ -352,6 +352,15 @@ describe('conformance: structural errors (§11.3)', () => {
       } catch (err) {
         thrown = err;
       }
+
+      // `error: false` cases pin the negative side of a rule — that a legal
+      // document close to a rejected one still loads. Without them a rule can be
+      // implemented far too broadly and every positive case still passes.
+      if (expected.error === false) {
+        expect(thrown, 'expected this document to load').toBeUndefined();
+        return;
+      }
+
       expect(thrown, 'expected a structural error').toBeInstanceOf(HifStructuralError);
       if (expected.errorContains) {
         expect((thrown as Error).message).toContain(expected.errorContains);

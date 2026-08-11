@@ -12,6 +12,10 @@ npm install --save-dev @spool/hif      # TypeScript / JavaScript
 pip install spool-hif                  # Python
 ```
 
+> **Not published yet.** These package names are reserved for the first release
+> but nothing is on npm or PyPI, so the two commands above will fail today. Until
+> then, use it from a clone — see [Install from source](#install-from-source).
+
 ---
 
 ## Why this exists
@@ -128,7 +132,7 @@ You do not need an adapter, or even a Spool package in your language. Serve the
 fixture as a plain HTTP origin and point your client's base URL at it:
 
 ```bash
-npx spool serve fixtures/users.hif.json
+npx @spool/hif serve fixtures/users.hif.json
 #  spool serving 3 interaction(s) at http://127.0.0.1:8080
 #  Requests are matched as if sent to https://api.example.com
 #
@@ -209,6 +213,32 @@ spool proxy fixtures/users.hif.json   # replay via HTTP_PROXY
 - **No streaming.** Server-sent events and chunked responses can be recorded as
   their concatenated bytes; chunk boundaries and their timing are lost.
 - **HTTP only.** WebSockets and gRPC are out of scope for 1.0.
+
+## Install from source
+
+Until the packages are published this is the only way to use Spool, and it is
+also how you would work on it.
+
+```bash
+git clone https://github.com/totosoftsro/spool.git
+cd spool
+
+# TypeScript: build once, then depend on the directory
+(cd implementations/typescript && npm ci && npm run build)
+npm install --save-dev /path/to/spool/implementations/typescript
+
+# Python
+pip install -e /path/to/spool/implementations/python[httpx]
+```
+
+The CLI runs from the build without installing anything:
+
+```bash
+node /path/to/spool/implementations/typescript/dist/cli.js lint fixtures/*.hif.json
+```
+
+[`examples/`](./examples/) resolves the implementations this way, so every example
+runs on a fresh clone with no registry access.
 
 ## Contributing
 

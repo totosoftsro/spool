@@ -53,7 +53,7 @@ Each case has a `kind` that determines how a runner executes it.
 | `explain` | `fixture`, `live` | `candidates` (ref/score/total order) and `suggestions` |
 | `redact` | `fixture`, `config` | `fixture` after redaction, `rules` |
 | `entropy` | `subject`, `config` | `tokens` array |
-| `structural` | `document` | `error: true`, with `errorContains` when the message is checkable |
+| `structural` | `document` | `error: true` with `errorContains` when the message is checkable, or `error: false` for a legal document that a nearby rule must not reject |
 | `version` | `document` | `accepted`, and `warns` when a warning is required |
 | `regex` | `pattern`, `subjects` | `valid`, and `matches` per subject |
 | `template` | `recorded`, `subjects` | `matches` per subject |
@@ -78,6 +78,28 @@ This matters, so it is documented per group rather than assumed.
 The general rule: **where a value could be produced by the code under test, it
 was produced by something else instead.** `conformance/verify-vectors.sh`
 re-derives the digest and base64 vectors using `openssl` and fails if they drift.
+
+## Known intentional divergences
+
+The project's rule is that any difference between implementations is a bug. There
+is currently one deliberate exception, recorded here so nobody spends an afternoon
+on it:
+
+**The text of a malformed-JSON error.** A fixture that is not valid JSON is
+rejected by both implementations with the same exit code and the same message
+prefix, but the trailing detail comes from the host JSON parser:
+
+```
+ts: ... is not valid JSON: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+py: ... is not valid JSON: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)
+```
+
+Making these identical would mean writing our own JSON parser, which is a large
+amount of risk for a cosmetic gain — and the host parser's message is genuinely
+more useful to somebody fixing a broken fixture than a normalised one would be.
+`cross-check.sh` therefore does not compare this case.
+
+Nothing else is exempt. If you find another difference, it is a bug.
 
 ## Adding a case
 

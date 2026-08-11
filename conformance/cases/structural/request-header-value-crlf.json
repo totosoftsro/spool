@@ -1,0 +1,30 @@
+{
+  "id": "structural/request-header-value-crlf",
+  "kind": "structural",
+  "level": "core",
+  "description": "The rule applies to request headers too, not only response headers.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a",
+          "headers": [
+            [
+              "x-a",
+              "v\r\nx: evil"
+            ]
+          ]
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "U+000D"
+  }
+}

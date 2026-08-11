@@ -23,6 +23,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
@@ -50,6 +51,39 @@ TRANSPORT_HEADERS = frozenset(
         "content-length",
     }
 )
+
+#: Largest request body the servers will buffer. These servers exist to replay
+#: fixtures in tests, so a body beyond this is either a mistake or an attempt to
+#: exhaust memory. Reading without a bound let any client hold the process's
+#: memory hostage.
+MAX_REQUEST_BODY = 32 * 1024 * 1024
+
+
+def _body_forbidden(status: int) -> bool:
+    """Statuses that must not carry content (RFC 9110 sections 6.4.1, 15.4.5).
+
+    Node strips the body for these silently while ``http.server`` does not, so
+    both implementations now apply the rule explicitly. Emitting a body with a
+    204 produces a message a client cannot frame, and on a keep-alive connection
+    the bytes are read as the start of the next response.
+    """
+    return status in (204, 304) or 100 <= status < 200
+
+
+def _default_reason(status: int) -> str:
+    """The reason phrase to send when the fixture does not supply one.
+
+    Left to the two HTTP servers this differed: Node invents "unknown" for an
+    unregistered code and ``http.server`` invents an empty string. Node's
+    ``writeHead`` substitutes "unknown" for any falsy reason phrase and offers no
+    way to send an empty one, so that is the value both implementations use —
+    matching an existing platform behaviour rather than inventing a third.
+    """
+    try:
+        return HTTPStatus(status).phrase
+    except ValueError:
+        return "unknown"
+
 
 CONNECT_EXPLANATION = """spool proxy cannot serve https through a CONNECT tunnel.
 
@@ -136,14 +170,21 @@ class _BaseHandler(BaseHTTPRequestHandler):
         if on_log:
             on_log(format % args)
 
-    def _read_body(self) -> bytes:
+    def _read_body(self) -> Optional[bytes]:
+        """Read the request body, or None when it exceeds MAX_REQUEST_BODY."""
         length = self.headers.get("content-length")
-        if length is not None:
-            try:
-                return self.rfile.read(int(length))
-            except (ValueError, OSError):
-                return b""
-        return b""
+        if length is None:
+            return b""
+        try:
+            declared = int(length)
+        except ValueError:
+            return b""
+        if declared > MAX_REQUEST_BODY:
+            return None
+        try:
+            return self.rfile.read(declared)
+        except OSError:
+            return b""
 
     def _header_pairs(self) -> List[Tuple[str, str]]:
         return [
@@ -164,11 +205,18 @@ class _BaseHandler(BaseHTTPRequestHandler):
 
     def _write_deliverable(self, out: Any, truncated: bool) -> None:
         payload = out.body
-        self.send_response(out.status, out.status_text or None)
+        self.send_response(out.status, out.status_text or _default_reason(out.status))
         for name, value in out.headers:
             if name == "content-length":
                 continue
             self.send_header(name, value)
+
+        if _body_forbidden(out.status):
+            # No content-length either: RFC 9110 forbids content, and a length of
+            # 0 on a 304 is still a framing claim the origin never made.
+            self.end_headers()
+            return
+
         if truncated:
             # Section 10 partial-response: announce the full length, send half,
             # then drop the connection, so the client sees a genuine mid-body
@@ -190,7 +238,7 @@ class _BaseHandler(BaseHTTPRequestHandler):
         self, status: int, text: str, error_kind: str, reason: Optional[str] = None
     ) -> None:
         payload = text.encode("utf-8")
-        self.send_response(status, reason)
+        self.send_response(status, reason or _default_reason(status))
         self.send_header("content-type", "text/plain; charset=utf-8")
         self.send_header("x-spool-error", error_kind)
         self.send_header("content-length", str(len(payload)))
@@ -232,6 +280,13 @@ class _ReplayHandler(_BaseHandler):
                 target = base + path
 
             body = self._read_body()
+            if body is None:
+                self._write_text(
+                    413,
+                    f"spool: request body exceeds {MAX_REQUEST_BODY} bytes\n",
+                    "server-error",
+                )
+                return
             request = self._to_hif_request(target, body)
             self.log_message("%s %s", request["method"], self.path)
 
@@ -276,6 +331,11 @@ class _RecordHandler(_BaseHandler):
         target = base + path
 
         body = self._read_body()
+        if body is None:
+            self._write_text(
+                413, f"spool: request body exceeds {MAX_REQUEST_BODY} bytes\n", "server-error"
+            )
+            return
         pairs = self._header_pairs()
         method = self.command.upper()
         self.log_message("%s %s -> %s", method, path, target)
@@ -427,6 +487,11 @@ def record_serve(
     real response. Redaction runs before anything is stored, exactly as
     in-process recording does (section 9).
     """
+    # `urllib.request.urlopen` honours file://, ftp:// and more. The origin comes
+    # from the operator rather than from a fixture, but a typo should fail loudly
+    # instead of turning the recorder into a local-file reader.
+    normalize_url(origin if origin.endswith("/") else origin + "/")
+
     recorder = Recorder(redact=redact if redact is not None else RedactionConfig())
     server = ThreadingHTTPServer((host, port), _RecordHandler)
     server.daemon_threads = True

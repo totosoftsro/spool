@@ -1,0 +1,30 @@
+{
+  "id": "structural/header-name-not-token",
+  "kind": "structural",
+  "level": "core",
+  "description": "A header name must be an RFC 9110 token; a space is not permitted (section 6.3.1).",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            [
+              "x bad",
+              "v"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "token"
+  }
+}

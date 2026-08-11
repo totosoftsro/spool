@@ -13,6 +13,11 @@ npm install --save-dev @spool/hif
 pip install spool-hif
 ```
 
+> **Not published yet.** Neither package is on npm or PyPI, so both commands fail
+> today. Use it from a clone in the meantime: see
+> [Install from source](../README.md#install-from-source) in the README. Every
+> code sample below works either way.
+
 Neither package has required runtime dependencies. The Python adapters import
 `httpx` or `requests` lazily, so you only need the client you actually use.
 
@@ -39,7 +44,7 @@ Create `fixtures/users.hif.json`:
 Check it:
 
 ```bash
-npx spool lint fixtures/users.hif.json
+npx @spool/hif lint fixtures/users.hif.json
 ```
 
 Use it. **TypeScript:**
@@ -173,7 +178,7 @@ Or let one answer any number of times:
 Do not guess. Ask:
 
 ```bash
-npx spool explain fixtures/users.hif.json '{"method":"GET","url":"https://api.example.com/users/8"}'
+npx @spool/hif explain fixtures/users.hif.json '{"method":"GET","url":"https://api.example.com/users/8"}'
 ```
 
 You get the closest recorded interaction, which fields matched, the exact path

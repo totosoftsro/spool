@@ -100,10 +100,16 @@ def main() -> int:
 
         for lineno, line in enumerate(lines, start=1):
             for match in CITATION.finditer(line):
-                before = line[max(0, match.start() - 40) : match.start()]
-                if re.search(r"RFC\s*\d+[^.]{0,20}$", before, re.IGNORECASE):
-                    continue
-                if re.search(r"ECMA|OASIS|WHATWG", before, re.IGNORECASE):
+                before = line[: match.start()]
+                # A citation belongs to another document when one is named earlier
+                # on the same line and nothing has switched the subject back to
+                # this specification. That covers a list of sections after a
+                # single reference — "RFC 9110 §6.4.1, §15.4.5" — where an
+                # adjacency check on the nearest few characters would only
+                # recognise the first.
+                other_doc = re.search(r"RFC\s*\d+|ECMA[- ]?\d*|OASIS|WHATWG", before, re.IGNORECASE)
+                back_to_hif = re.search(r"\b(spec|specification|HIF)\b", before, re.IGNORECASE)
+                if other_doc and not (back_to_hif and back_to_hif.start() > other_doc.start()):
                     continue
                 number = match.group(1)
                 citations += 1

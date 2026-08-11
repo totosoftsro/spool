@@ -1,0 +1,24 @@
+{
+  "id": "structural/port-zero",
+  "kind": "structural",
+  "level": "core",
+  "description": "Port 0 is not a usable TCP port and must be rejected.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test:0/a"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "1..65535"
+  }
+}

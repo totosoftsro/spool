@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-quantified-group-star",
+  "kind": "regex",
+  "level": "core",
+  "description": "A quantifier applied to a group must be rejected: an ambiguous alternation under a quantifier, also exponential.",
+  "pattern": "(a|aa)*b",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

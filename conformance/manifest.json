@@ -1135,6 +1135,102 @@
       "kind": "version",
       "level": "core",
       "file": "cases/version/lowercase-method-warns.json"
+    },
+    {
+      "id": "structural/header-value-cr",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-value-cr.json"
+    },
+    {
+      "id": "structural/header-value-lf",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-value-lf.json"
+    },
+    {
+      "id": "structural/header-value-nul",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-value-nul.json"
+    },
+    {
+      "id": "structural/header-value-htab-allowed",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-value-htab-allowed.json"
+    },
+    {
+      "id": "structural/header-name-not-token",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-name-not-token.json"
+    },
+    {
+      "id": "structural/header-name-token-punctuation",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/header-name-token-punctuation.json"
+    },
+    {
+      "id": "structural/request-header-value-crlf",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/request-header-value-crlf.json"
+    },
+    {
+      "id": "structural/reason-phrase-crlf",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/reason-phrase-crlf.json"
+    },
+    {
+      "id": "structural/port-above-range",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/port-above-range.json"
+    },
+    {
+      "id": "structural/port-zero",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/port-zero.json"
+    },
+    {
+      "id": "normalize/port-max",
+      "kind": "normalize",
+      "level": "core",
+      "file": "cases/normalize/port-max.json"
+    },
+    {
+      "id": "match/regex-reject-quantified-group-plus",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-quantified-group-plus.json"
+    },
+    {
+      "id": "match/regex-reject-quantified-group-star",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-quantified-group-star.json"
+    },
+    {
+      "id": "match/regex-reject-quantified-group-counted",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-quantified-group-counted.json"
+    },
+    {
+      "id": "match/regex-reject-quantified-group-simple",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-reject-quantified-group-simple.json"
+    },
+    {
+      "id": "match/regex-group-without-quantifier",
+      "kind": "regex",
+      "level": "core",
+      "file": "cases/match/regex-group-without-quantifier.json"
     }
   ]
 }

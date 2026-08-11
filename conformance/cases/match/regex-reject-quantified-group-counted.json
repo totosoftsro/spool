@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-quantified-group-counted",
+  "kind": "regex",
+  "level": "core",
+  "description": "A quantifier applied to a group must be rejected: a counted quantifier on a group is excluded by the same rule.",
+  "pattern": "(ab){2,3}",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

@@ -28,6 +28,17 @@ export interface ParsedUrl {
 }
 
 export function normalizeUrl(input: string): ParsedUrl {
+  // §6.4 step 3 bounds the port. This check runs before `new URL`, which rejects
+  // an out-of-range port with its own generic message; doing it here lets both
+  // implementations report the same specific error for the same fixture.
+  const explicitPort = /^[A-Za-z][A-Za-z0-9+.-]*:\/\/[^/?#]*?:(\d+)(?=[/?#]|$)/.exec(input);
+  if (explicitPort) {
+    const port = Number(explicitPort[1]);
+    if (!(port >= 1 && port <= 65535)) {
+      throw new HifStructuralError(`Port ${port} is outside 1..65535 in ${JSON.stringify(input)}`);
+    }
+  }
+
   let parsed: URL;
   try {
     parsed = new URL(input);

@@ -1,0 +1,30 @@
+{
+  "id": "structural/header-value-lf",
+  "kind": "structural",
+  "level": "core",
+  "description": "A header value containing LF must be rejected, for the same reason as CR.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            [
+              "x-a",
+              "ok\nx: evil"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "U+000A"
+  }
+}

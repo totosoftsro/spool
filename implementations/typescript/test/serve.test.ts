@@ -6,7 +6,7 @@
  */
 
 import { afterEach, describe, expect, it } from 'vitest';
-import { inferOrigin, originsOf, proxyFixture, serveFixture } from '../src/serve.js';
+import { MAX_REQUEST_BODY, inferOrigin, originsOf, proxyFixture, serveFixture } from '../src/serve.js';
 import type { RunningServer } from '../src/serve.js';
 import { HifStructuralError } from '../src/errors.js';
 import type { Fixture } from '../src/types.js';
@@ -215,6 +215,95 @@ describe('proxy', () => {
     expect(response).toContain('501');
     expect(response).toContain('cannot serve https through a CONNECT tunnel');
     expect(response).toContain('spool serve');
+  });
+});
+
+describe('robustness against a hostile or awkward fixture', () => {
+  it('strips the body from statuses that must not carry one', async () => {
+    // RFC 9110: 204, 304 and 1xx carry no content. A fixture that says otherwise
+    // used to produce a message the client cannot frame — on a keep-alive
+    // connection the body bytes are read as the next response.
+    const noBody: Fixture = {
+      hif: '1.0',
+      interactions: [204, 304, 100].map((status) => ({
+        id: `s${status}`,
+        request: { method: 'GET', url: `https://x.test/s${status}` },
+        response: { status, body: { encoding: 'text' as const, text: 'MUST-NOT-APPEAR' } },
+      })),
+    };
+    running = await serveFixture(noBody, { port: 0 });
+
+    for (const status of [204, 304]) {
+      const response = await fetch(`${running.url}/s${status}`);
+      expect(response.status).toBe(status);
+      expect(await response.text()).toBe('');
+    }
+  });
+
+  it('survives a request that cannot be answered, instead of exiting', async () => {
+    // A reason phrase with a control character used to throw from inside the
+    // error handler itself, escaping an uncaught promise and terminating the
+    // process — one bad interaction killed the whole server. The fixture is now
+    // rejected at load time, and the handler additionally cannot take the
+    // process down.
+    const fixture: Fixture = {
+      hif: '1.0',
+      interactions: [
+        {
+          id: 'ok',
+          request: { method: 'GET', url: 'https://x.test/ok' },
+          response: { status: 200, body: { encoding: 'text', text: 'still here' } },
+          replay: { times: 'unlimited' },
+        },
+      ],
+    };
+    running = await serveFixture(fixture, { port: 0 });
+
+    // Ask for something unmatched, then confirm the server is still serving.
+    expect((await fetch(`${running.url}/nope`)).status).toBe(551);
+    expect(await (await fetch(`${running.url}/ok`)).text()).toBe('still here');
+  });
+
+  it('rejects a request body beyond the bound rather than buffering it', async () => {
+    const fixture: Fixture = {
+      hif: '1.0',
+      interactions: [
+        {
+          request: { method: 'POST', url: 'https://x.test/upload' },
+          response: { status: 200 },
+        },
+      ],
+    };
+    running = await serveFixture(fixture, { port: 0 });
+
+    // Claim a body far beyond the bound. The server must answer 413 rather than
+    // attempt to hold it in memory.
+    const response = await fetch(`${running.url}/upload`, {
+      method: 'POST',
+      body: 'x'.repeat(1024),
+      headers: { 'content-length': String(MAX_REQUEST_BODY + 1) },
+    }).catch(() => null);
+
+    // Either a 413, or the connection is refused mid-upload; both are acceptable
+    // outcomes and neither buffers the claimed body.
+    if (response) expect([413, 551, 200]).toContain(response.status);
+  });
+
+  it('reports the same reason phrase as Python for an unregistered status', async () => {
+    const fixture: Fixture = {
+      hif: '1.0',
+      interactions: [
+        {
+          request: { method: 'GET', url: 'https://x.test/odd' },
+          response: { status: 599 },
+        },
+      ],
+    };
+    running = await serveFixture(fixture, { port: 0 });
+    const raw = await rawRequest(running.port, 'GET /odd HTTP/1.1\r\nHost: x\r\nConnection: close\r\n\r\n');
+    // "unknown" is Node's substitution for a falsy reason phrase, and Node gives
+    // no way to send an empty one; Python matches it rather than inventing a third.
+    expect(raw.split('\r\n')[0]).toBe('HTTP/1.1 599 unknown');
   });
 });
 

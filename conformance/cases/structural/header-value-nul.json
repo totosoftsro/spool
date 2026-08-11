@@ -1,0 +1,30 @@
+{
+  "id": "structural/header-value-nul",
+  "kind": "structural",
+  "level": "core",
+  "description": "A header value containing NUL must be rejected (section 6.3.1).",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            [
+              "x-a",
+              "a\u0000b"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "U+0000"
+  }
+}

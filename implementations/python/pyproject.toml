@@ -9,6 +9,7 @@ description = "Record and replay HTTP traffic using the portable HIF fixture for
 readme = "README.md"
 requires-python = ">=3.9"
 license = "Apache-2.0"
+license-files = ["LICENSE"]
 keywords = [
   "http",
   "testing",
@@ -60,6 +61,11 @@ Issues = "https://github.com/totosoftsro/spool/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spool"]
+
+[tool.hatch.build.targets.sdist]
+# The conformance suite lives outside this directory, so an sdist cannot run it.
+# Everything needed to use and typecheck the package is included.
+include = ["src", "LICENSE", "README.md", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

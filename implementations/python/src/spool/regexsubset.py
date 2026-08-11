@@ -31,7 +31,14 @@ _CLASS_S = r" \t\n\r\f\v"
 
 _ESCAPABLE = set("\\.^$|?*+()[]{}/-") | set("tnrfv")
 
-MAX_SUBJECT = 100_000
+#: Longest subject a compiled pattern will be run against (section 7.6.2).
+#:
+#: A secondary measure only. Bounding length does not prevent exponential
+#: backtracking — ``(a+)+b`` against 40 characters already runs indefinitely —
+#: which is why the structural rule forbidding a quantifier on a group is the
+#: real protection. Header values and JSON strings do not legitimately reach
+#: this size.
+MAX_SUBJECT = 8192
 
 _COUNTED = re.compile(r"^\d+(,\d*)?$")
 
@@ -68,11 +75,24 @@ def _reject(pattern: str, why: str) -> None:
     )
 
 
+def _reject_quantified_group(pattern: str, quantifier: str) -> None:
+    raise HifStructuralError(
+        f"Regex {q(pattern)} applies the quantifier {q(quantifier)} to a group, which the HIF "
+        "regex subset (spec §7.6.2) excludes. A quantified group is what makes backtracking "
+        'exponential: "(a+)+b" never finishes against a run of "a" characters. Rewrite without '
+        "the group, or match this value with a placeholder other than {{regex:...}}."
+    )
+
+
 def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads better than a split one
     out: List[str] = []
     in_class = False
     quantifiable = False
     group_depth = 0
+    # True when the last thing emitted was a closing ")". Section 7.6.2 forbids a
+    # quantifier on a group, because a quantified group whose body is ambiguous
+    # is what makes backtracking exponential.
+    after_group = False
 
     i = 0
     length = len(pattern)
@@ -97,6 +117,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
             if nxt in ("A", "Z", "z", "G"):
                 _reject(pattern, "anchors outside ^ and $")
 
+            after_group = False
             if in_class:
                 if nxt == "d":
                     out.append(_CLASS_D)
@@ -137,12 +158,14 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
             if ch == "]":
                 in_class = False
                 quantifiable = True
+                after_group = False
             i += 1
             continue
 
         # ---- structure -----------------------------------------------------
         if ch == "[":
             in_class = True
+            after_group = False
             out.append(ch)
             i += 1
             # A `^` or `]` immediately after `[` is literal.
@@ -164,6 +187,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
             group_depth += 1
             out.append("(")
             quantifiable = False
+            after_group = False
             i += 1
             continue
 
@@ -173,12 +197,15 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
             group_depth -= 1
             out.append(")")
             quantifiable = True
+            after_group = True
             i += 1
             continue
 
         if ch in "*+?":
             if not quantifiable:
                 raise HifStructuralError(f'Regex {q(pattern)} has a quantifier "{ch}" with nothing to repeat')
+            if after_group:
+                _reject_quantified_group(pattern, ch)
             out.append(ch)
             i += 1
             if i < length and pattern[i] == "?":
@@ -204,6 +231,8 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
                 raise HifStructuralError(
                     f'Regex {q(pattern)} has a quantifier "{{{inner}}}" with nothing to repeat'
                 )
+            if after_group:
+                _reject_quantified_group(pattern, "{" + inner + "}")
             out.append("{" + inner + "}")
             i = close + 1
             if i < length and pattern[i] == "?":
@@ -216,6 +245,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
         if ch in "|^$":
             out.append(ch)
             quantifiable = False
+            after_group = False
             i += 1
             continue
 
@@ -223,6 +253,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
             # Section 7.6.2: `.` matches any character except U+000A.
             out.append("[^\\n]")
             quantifiable = True
+            after_group = False
             i += 1
             continue
 
@@ -233,6 +264,7 @@ def _translate(pattern: str) -> str:  # noqa: C901 - a single flat scanner reads
 
         out.append(re.escape(ch))
         quantifiable = True
+        after_group = False
         i += 1
 
     if in_class:

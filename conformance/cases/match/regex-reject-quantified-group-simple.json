@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-quantified-group-simple",
+  "kind": "regex",
+  "level": "core",
+  "description": "A quantifier applied to a group must be rejected: even an unambiguous group is rejected, because the rule is structural and must be decidable in one pass rather than requiring ambiguity analysis.",
+  "pattern": "(ab)+",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

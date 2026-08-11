@@ -1,0 +1,15 @@
+{
+  "id": "normalize/port-max",
+  "kind": "normalize",
+  "level": "core",
+  "description": "65535 is the largest valid port and must be accepted.",
+  "url": "https://x.test:65535/a",
+  "expected": {
+    "scheme": "https",
+    "host": "x.test",
+    "port": 65535,
+    "path": "/a",
+    "query": [],
+    "href": "https://x.test:65535/a"
+  }
+}

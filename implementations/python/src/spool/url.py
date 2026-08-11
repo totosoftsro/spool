@@ -92,6 +92,11 @@ def _split_host_port(authority: str, scheme: str, url: str) -> Tuple[str, Option
     if not port_text.isdigit():
         raise HifStructuralError(f"Malformed port in {q(url)}")
     port = int(port_text)
+    # Section 6.4 step 3. Without this bound the two implementations disagreed:
+    # WHATWG URL rejects a port above 65535 and this parser did not, so the same
+    # fixture loaded in one language and failed in the other.
+    if not 1 <= port <= 65535:
+        raise HifStructuralError(f"Port {port} is outside 1..65535 in {q(url)}")
     return host, (None if port == DEFAULT_PORTS[scheme] else port)
 
 

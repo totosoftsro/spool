@@ -213,7 +213,13 @@ U+000A), groups, alternation, and the quantifiers `? * +` and `{n,m}`.
 
 Excluded and **rejected at load time**: non-capturing and named groups,
 lookaround, backreferences, word boundaries, lazy and possessive quantifiers,
-Unicode property escapes.
+Unicode property escapes, and **any quantifier applied to a group**.
+
+That last one is the safety rule rather than a portability rule. `(a+)+b` is
+valid in every engine and never terminates against a run of `a` characters, so
+`(ab)+` and `(a|aa)*` are rejected too — a quantified group is where exponential
+backtracking comes from. `(cat|dog)s` is fine, because no quantifier follows the
+group.
 
 Two of these matter more than they look. JavaScript's `\s` matches Unicode
 whitespace while Python's `re.ASCII` does not; and JavaScript's `.` excludes

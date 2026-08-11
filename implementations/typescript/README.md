@@ -105,8 +105,8 @@ Anything not exported from the package root is internal.
 ## CLI
 
 ```bash
-npx spool lint fixtures/*.hif.json
-npx spool explain fixtures/users.hif.json request.json
+npx @spool/hif lint fixtures/*.hif.json
+npx @spool/hif explain fixtures/users.hif.json request.json
 ```
 
 Full reference: [docs/cli.md](../../docs/cli.md).

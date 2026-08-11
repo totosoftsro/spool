@@ -30,6 +30,30 @@ _ID_PATTERN_TEXT = "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
 _VERSION_PATTERN = re.compile(r"\A(\d+)\.(\d+)\Z")
 _INLINE_REGEX = re.compile(r"\{\{regex:((?:[^}]|\}(?!\}))*)\}\}")
 
+#: Section 6.3.1. An RFC 9110 `token`, which is what a field name must be.
+_TOKEN = re.compile(r"\A[!#$%&'*+\-.^_`|~0-9A-Za-z]+\Z")
+
+#: Section 6.3.1. CR, LF, NUL and the other C0 controls except HTAB are forbidden
+#: in a field value and in a reason phrase. A value containing CRLF would
+#: terminate the header block early when delivered, letting a fixture inject
+#: headers and a body of its own — HTTP response splitting carried in a data
+#: file. Fixtures come from repositories, pull requests and HAR conversions, so
+#: they are untrusted input.
+_FORBIDDEN_IN_FIELD_VALUE = re.compile(r"[\x00-\x08\x0a-\x1f\x7f]")
+
+
+def _check_field_value(value: str, what: str, at: str) -> None:
+    found = _FORBIDDEN_IN_FIELD_VALUE.search(value)
+    if found:
+        code = ord(found.group(0))
+        raise HifStructuralError(
+            f"{what} contains U+{code:04X}, which spec §6.3.1 forbids. CR, LF, NUL and other "
+            "control characters are rejected because delivering them would let this fixture "
+            "inject headers into a response.",
+            at,
+        )
+
+
 _KNOWN_METHODS = {"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"}
 _FAULT_TYPES = {
     "connection-refused",
@@ -203,6 +227,12 @@ def _validate_response(raw: Any, at: str, warnings: List[str]) -> None:
     if isinstance(status, bool) or not isinstance(status, int) or not 100 <= status <= 599:
         raise HifStructuralError(f'Response "status" must be an integer in 100..599, got {q(status)}', at)
 
+    status_text = raw.get("statusText")
+    if status_text is not None:
+        if not isinstance(status_text, str):
+            raise HifStructuralError('Response "statusText" must be a string', at)
+        _check_field_value(status_text, "Reason phrase", at)
+
     _validate_header_list(raw.get("headers"), f"{at}.headers")
     if "body" in raw and raw["body"] is not None:
         validate_body(raw["body"], f"{at}.body")
@@ -221,8 +251,14 @@ def _validate_header_list(raw: Any, at: str) -> None:
             )
         if not isinstance(entry[0], str):
             raise HifStructuralError("Header name must be a string", where)
+        if not _TOKEN.match(entry[0]):
+            raise HifStructuralError(
+                f"Header name {q(entry[0])} is not an RFC 9110 token (spec §6.3.1)", where
+            )
         if len(entry) == 2 and not isinstance(entry[1], str):
             raise HifStructuralError("Header value must be a string", where)
+        if len(entry) == 2:
+            _check_field_value(entry[1], "Header value", where)
         if len(entry) == 3 and (entry[1] is not None or not isinstance(entry[2], str)):
             raise HifStructuralError("A three-element header entry must be [name, null, base64]", where)
 

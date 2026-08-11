@@ -1,0 +1,30 @@
+{
+  "id": "structural/header-value-cr",
+  "kind": "structural",
+  "level": "core",
+  "description": "A header value containing CR must be rejected. Delivering it would terminate the header block early, letting a fixture inject headers and a body into the response.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            [
+              "x-a",
+              "ok\rx: evil"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "U+000D"
+  }
+}

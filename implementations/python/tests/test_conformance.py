@@ -330,6 +330,14 @@ def test_entropy(entry: Dict[str, Any]) -> None:
 @pytest.mark.parametrize("entry", cases("structural"), ids=ids(cases("structural")))
 def test_structural(entry: Dict[str, Any]) -> None:
     case = load(entry)
+
+    # `error: false` cases pin the negative side of a rule — that a legal document
+    # close to a rejected one still loads. Without them a rule can be implemented
+    # far too broadly and every positive case still passes.
+    if case["expected"].get("error") is False:
+        parse_fixture(json.dumps(case["document"]))
+        return
+
     with pytest.raises(HifStructuralError) as excinfo:
         parse_fixture(json.dumps(case["document"]))
     contains = case["expected"].get("errorContains")

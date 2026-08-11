@@ -1,0 +1,12 @@
+{
+  "id": "match/regex-reject-quantified-group-plus",
+  "kind": "regex",
+  "level": "core",
+  "description": "A quantifier applied to a group must be rejected: the classic catastrophic-backtracking pattern; it never terminates against a run of 'a'.",
+  "pattern": "(a+)+b",
+  "subjects": [],
+  "expected": {
+    "valid": false,
+    "matches": []
+  }
+}

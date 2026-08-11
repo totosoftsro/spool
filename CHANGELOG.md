@@ -9,7 +9,7 @@ and the code that reads it version independently
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 the implementations follow [semantic versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.1.0] — unreleased
 
 ### Added
 
@@ -34,8 +34,45 @@ the implementations follow [semantic versioning](https://semver.org/).
   curl, so the "works from any language" claim is verified in CI rather than
   asserted in a README.
 
+### Security
+
+Found by a pre-release audit that treated fixtures as untrusted input, which is
+what they are: they are committed to repositories, reviewed in pull requests,
+converted from HAR captures and copied between projects.
+
+- **HTTP response splitting via a fixture.** A header value or reason phrase
+  containing CRLF was delivered verbatim by `spool serve` in Python, terminating
+  the header block early and letting the fixture inject arbitrary headers and a
+  response body of its own. Header names, header values and reason phrases are
+  now validated when a fixture is *loaded* (spec §6.3.1), so every consumer —
+  both servers and all four adapters — is protected at once, and the malformed
+  fixture is reported with its location instead of reaching the wire.
+- **A single request could terminate `spool serve` in TypeScript.** The same
+  malformed reason phrase made Node throw from inside the error handler itself;
+  the rejection was unhandled and the process exited, taking the whole test run
+  with it. The handlers now cannot escape, and the error path is safe when a
+  response has already begun.
+- **Catastrophic regex backtracking was possible, and the security policy
+  claimed it was not.** `{{regex:(a+)+b}}` against a run of 40 `a` characters
+  never terminated in either implementation. The subject-length bound that
+  `SECURITY.md` cited as protection is no protection at all at that size. A
+  quantifier applied to a group is now rejected outright (spec §7.6.2), which
+  removes the whole family, and the policy text has been corrected.
+- **Unbounded request-body buffering** in both servers let any client hold the
+  process's memory. Bodies beyond 32 MiB now get a 413.
+- **`record_serve` accepted any URL scheme** in Python, and `urllib` honours
+  `file://`, so a mistyped origin turned the recorder into a local-file reader.
+  The origin is now validated as http or https.
+
 ### Fixed
 
+- **204, 304 and 1xx responses carried a body** in Python when the fixture
+  supplied one — a framing violation that a client on a keep-alive connection
+  reads as the start of the next response. Node stripped it silently, so this was
+  also a cross-language divergence. Both now apply the rule explicitly.
+- **A port above 65535 was accepted by Python and rejected by TypeScript**, so
+  the same fixture loaded in one language and failed in the other. The range is
+  now normative (spec §6.4) and both reject it with the same message.
 - Seven user-facing text divergences between the two implementations, found by
   extending `cross-check.sh` to compare `lint` output, HAR import output and
   live `serve` responses. Python's `repr` quoting (`'x'`) is replaced by JSON
@@ -46,11 +83,20 @@ the implementations follow [semantic versioning](https://semver.org/).
 
 ### Changed
 
-- `conformance/cross-check.sh` grew from 22 comparisons to 55, and now covers
+- **Both packages now ship the Apache-2.0 licence text.** Neither did, which for
+  an Apache-2.0 project is a distribution-terms problem, not a tidiness one.
+- **The Python package ships a `py.typed` marker.** It advertised
+  `Typing :: Typed` while giving consumers' type checkers nothing to read.
+- **The docs said `npx spool`**, which asks npm for a package called `spool` —
+  one that exists and belongs to someone else. All six occurrences now say
+  `npx @spool/hif`, and the CLI reference explains why it matters.
+- The README and getting-started guide now state plainly that the packages are
+  not published yet, and give a from-source path that works today.
+- `conformance/cross-check.sh` grew from 22 comparisons to 65, and now covers
   lint warnings, HAR conversion and real HTTP responses in addition to mismatch
   reports and digests.
 
-## [0.1.0] — 2026-08-10
+### Also in 0.1.0
 
 First release. Targets HIF 1.0 at conformance level **Full** in both
 implementations.
@@ -94,5 +140,6 @@ implementations.
 - `conformance/cross-check.sh` compares the two implementations against each
   other, including byte-identical rendered mismatch reports.
 
-[Unreleased]: https://github.com/totosoftsro/spool/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/totosoftsro/spool/releases/tag/v0.1.0
+Nothing has been tagged or published yet, so there are no release links here.
+The release workflows tag each implementation separately — `typescript-v0.1.0`
+and `python-v0.1.0` — and this section will link to those tags once they exist.

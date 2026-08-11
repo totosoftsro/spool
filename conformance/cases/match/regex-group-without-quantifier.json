@@ -1,0 +1,20 @@
+{
+  "id": "match/regex-group-without-quantifier",
+  "kind": "regex",
+  "level": "core",
+  "description": "A group with no quantifier after it stays legal — this is the documented example, so the safety rule must not break it.",
+  "pattern": "(cat|dog)s",
+  "subjects": [
+    "cats",
+    "dogs",
+    "cows"
+  ],
+  "expected": {
+    "valid": true,
+    "matches": [
+      true,
+      true,
+      false
+    ]
+  }
+}

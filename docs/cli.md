@@ -5,9 +5,17 @@ command to one implementation and not the other is treated as a divergence, and
 `conformance/cross-check.sh` compares the two command surfaces in CI.
 
 ```bash
-npx spool --help          # from @spool/hif
-python -m spool.cli --help  # from spool-hif, or just `spool` if it is on PATH
+npx @spool/hif --help        # from @spool/hif
+python -m spool.cli --help   # from spool-hif, or just `spool` if it is on PATH
 ```
+
+**Use `npx @spool/hif`, not `npx spool`.** The binary inside the package is named
+`spool`, but `npx spool` asks npm for a *package* called `spool` — which exists
+and belongs to somebody else. Naming the package explicitly is the difference
+between running this tool and running a stranger's.
+
+Once the package is a dependency of your project, the `spool` binary is on the
+local path and `npm exec spool` or a `package.json` script works as expected.
 
 ## Exit codes
 

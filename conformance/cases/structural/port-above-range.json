@@ -1,0 +1,24 @@
+{
+  "id": "structural/port-above-range",
+  "kind": "structural",
+  "level": "core",
+  "description": "A port above 65535 must be rejected. The two implementations disagreed here: one URL library rejected it and the other accepted it.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test:99999/a"
+        },
+        "response": {
+          "status": 200
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "1..65535"
+  }
+}

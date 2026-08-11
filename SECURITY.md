@@ -28,9 +28,16 @@ privileged operation, so the threat model is narrow but not empty.
   are often committed to a repository and read from untrusted forks in CI.
 - Denial of service from a crafted fixture: unbounded memory, or a regular
   expression that does not terminate. The `{{regex:...}}` subset
-  ([§7.6.2](./specification/hif-1.0.md#762-regex)) excludes constructs that
-  enable catastrophic backtracking and bounds subject length; a pattern that
-  defeats those bounds is a vulnerability.
+  ([§7.6.2](./specification/hif-1.0.md#762-regex)) forbids a quantifier applied
+  to a group, which is the construct that makes backtracking exponential, and
+  bounds subject length as a secondary measure. A pattern that defeats those
+  bounds is a vulnerability.
+
+  Note that subject-length bounds alone would not be protection: exponential
+  backtracking on a 40-character subject already runs indefinitely. An earlier
+  draft of this policy claimed the subset excluded catastrophic backtracking
+  when it only bounded length; the structural rule above is what actually
+  enforces it.
 - **Redaction failing to apply a rule it claims to have applied.** If
   `meta.redaction.rules` lists `headers` but an `authorization` header survived
   verbatim, that is a security bug, not a feature request.

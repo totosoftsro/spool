@@ -286,6 +286,29 @@ into one entry, and MUST NOT reorder fields.
   stripped, and otherwise verbatim.
 - A field value that is not valid UTF-8 MUST be handled per §6.6.
 
+#### 6.3.1 Permitted characters
+
+A field name MUST be a [RFC 9110] `token`: one or more characters from
+
+```
+! # $ % & ' * + - . ^ _ ` | ~ 0-9 A-Z a-z
+```
+
+A field value MUST NOT contain any of CR (U+000D), LF (U+000A) or NUL (U+0000),
+and MUST NOT contain any other C0 control character except HTAB (U+0009).
+
+A reason phrase (`response.statusText`, §8) is subject to the same restriction as
+a field value.
+
+Readers MUST reject a violation as a structural error (§11.3). This is a security
+requirement, not a stylistic one: a player that delivers a field value containing
+CRLF terminates the header block early, so a fixture can inject arbitrary
+additional headers and a body of its own choosing into the response — an HTTP
+response-splitting attack carried in a data file. Because fixtures are committed
+to repositories, reviewed in pull requests, converted from HAR files and copied
+between projects, they must be treated as untrusted input, and the check has to
+happen when the document is read rather than being left to each delivery path.
+
 ### 6.4 URL normalization
 
 Recorders MUST apply exactly these normalizations before storing a URL, and
@@ -297,7 +320,10 @@ stable.
 2. Host is lowercased. An internationalized host MUST be stored in A-label
    (Punycode) form.
 3. A port equal to the scheme default (80 for `http`, 443 for `https`) is removed.
-   Any other port is retained.
+   Any other port is retained. A port MUST be an integer in 1..65535; anything
+   else is a structural error (§11.3). Without this bound the two reference
+   implementations disagreed, because one URL library rejected `:99999` and the
+   other accepted it.
 4. An empty path becomes `/`.
 5. Percent-encoding triplets are uppercased (`%2f` → `%2F`).
 6. Percent-encoded octets that correspond to [RFC 3986] unreserved characters
@@ -639,8 +665,23 @@ Implementations MUST reject a pattern using an excluded construct with a structu
 error rather than silently accepting host-regex behaviour, because that is exactly
 where two implementations would diverge. Matching is case-sensitive.
 
-Implementations SHOULD bound backtracking and MUST NOT hang on a pathological
-pattern; returning a structural error is an acceptable outcome.
+**A quantifier MUST NOT be applied to a group.** `(ab)+`, `(a+)+` and `(a|aa)*`
+are all rejected; `(cat|dog)s` is accepted, because no quantifier follows the
+group.
+
+This is the rule that keeps the subset safe rather than merely portable. A
+quantified group whose body can match the same input in more than one way causes
+exponential backtracking in every backtracking engine — the classic
+`(a+)+b` against a run of `a` characters never terminates in practice. Detecting
+ambiguity in general is hard; forbidding a quantifier on a group is a check an
+implementation can perform in one pass, and it removes the whole family. The cost
+is that a safe pattern like `(ab)+` must be written another way or moved into a
+`{{regex:...}}`-free comparison.
+
+Bounding the subject length is *not* sufficient protection and MUST NOT be relied
+on alone: exponential backtracking on a 40-character subject already exceeds any
+practical time limit. Implementations MUST additionally bound subject length to at
+most 8192 characters, and MUST return a structural error rather than truncating.
 
 ### 7.7 JSON paths
 
@@ -677,7 +718,7 @@ A path MUST begin with `/`. The empty string, meaning the whole document in RFC
 | Field        | Type    | Required | Description                              |
 | ------------ | ------- | -------- | ---------------------------------------- |
 | `status`     | integer | yes      | 100–599                                  |
-| `statusText` | string  | no       | Reason phrase; informational only        |
+| `statusText` | string  | no       | Reason phrase; informational only, §6.3.1 |
 | `headers`    | array   | no       | Same representation as §6.3              |
 | `body`       | object  | no       | Same representation as §6.5              |
 
@@ -893,8 +934,9 @@ Two error classes, which implementations MUST keep distinct:
 
 **Structural errors** — the document is not a valid fixture. Malformed JSON, a
 missing required member, a wrong type, an unknown major version, both `response`
-and `fault`, invalid base64, a duplicate `id`, a regex outside the §7.6.2 subset.
-Loading MUST fail.
+and `fault`, invalid base64, a duplicate `id`, a header name or value or reason
+phrase violating §6.3.1, a port outside 1..65535, a regex outside the §7.6.2
+subset. Loading MUST fail.
 
 **Match failures** — the document is valid, but no interaction corresponds to a
 live request. Replay MUST fail with the explanation of §13.

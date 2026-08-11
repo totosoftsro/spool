@@ -1,8 +1,9 @@
 # Contributing a client adapter
 
-An adapter connects the pure core to a real HTTP client. Each one is small —
-the two shipped adapters are around 150 lines each — and self-contained, which
-makes this one of the best-scoped ways to contribute.
+An adapter connects the pure core to a real HTTP client. Each one is small and
+self-contained — the four shipped adapters (`fetch` and `node:http` in
+TypeScript, `httpx` and `requests` in Python) run from roughly 170 to 310 lines —
+which makes this one of the best-scoped ways to contribute.
 
 ## What is missing
 

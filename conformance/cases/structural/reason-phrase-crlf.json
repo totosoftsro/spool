@@ -1,0 +1,25 @@
+{
+  "id": "structural/reason-phrase-crlf",
+  "kind": "structural",
+  "level": "core",
+  "description": "A reason phrase containing CR must be rejected: it is written into the status line, so CRLF there injects a header.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200,
+          "statusText": "OK\r\nx: evil"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "Reason phrase"
+  }
+}

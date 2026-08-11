@@ -1,0 +1,29 @@
+{
+  "id": "structural/header-name-token-punctuation",
+  "kind": "structural",
+  "level": "core",
+  "description": "Token punctuation is legal in a field name and must not be rejected.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200,
+          "headers": [
+            [
+              "x-a_b.c!#$%&'*+^`|~1",
+              "v"
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": false
+  }
+}
