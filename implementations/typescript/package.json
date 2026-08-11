@@ -57,9 +57,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/spool-hif/spool.git",
+    "url": "git+https://github.com/totosoftsro/spool.git",
     "directory": "implementations/typescript"
   },
-  "homepage": "https://github.com/spool-hif/spool#readme",
-  "bugs": "https://github.com/spool-hif/spool/issues"
+  "homepage": "https://github.com/totosoftsro/spool#readme",
+  "bugs": "https://github.com/totosoftsro/spool/issues"
 }

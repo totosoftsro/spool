@@ -54,9 +54,9 @@ dev = [
 spool = "spool.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/spool-hif/spool"
-Specification = "https://github.com/spool-hif/spool/blob/main/specification/hif-1.0.md"
-Issues = "https://github.com/spool-hif/spool/issues"
+Homepage = "https://github.com/totosoftsro/spool"
+Specification = "https://github.com/totosoftsro/spool/blob/main/specification/hif-1.0.md"
+Issues = "https://github.com/totosoftsro/spool/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spool"]

@@ -6,7 +6,7 @@ run everything locally, and what a good pull request looks like here.
 ## The short version
 
 ```bash
-git clone https://github.com/spool-hif/spool.git
+git clone https://github.com/totosoftsro/spool.git
 cd spool
 
 # TypeScript
@@ -45,8 +45,9 @@ The core is a pure function; adapters connect it to a real HTTP client. Each one
 is small and self-contained. See
 [`docs/contributing-adapters.md`](./docs/contributing-adapters.md).
 
-Known gaps: Node's `http`/`https` modules (which would cover axios, got and
-node-fetch v2), `aiohttp`, and `urllib3` directly.
+Known gaps: `aiohttp`, `urllib3` directly, and an undici Dispatcher so that
+`fetch` can be intercepted through undici's own seam rather than by replacing the
+global.
 
 ### 3. A language implementation
 
@@ -78,9 +79,10 @@ These are genuinely useful, not busywork:
 - Add a fixture example for an API shape not covered in `examples/`.
 - Add a `--format json` output to a CLI command that lacks it, in **both**
   implementations (the CLIs must not drift).
-- Write a converter from a HAR file to HIF, per
-  [Appendix B](./specification/hif-1.0.md#appendix-b--relationship-to-har).
-  It must report what it dropped.
+- Extend `spool import har` to cover a HAR quirk it currently skips — the
+  `skipped` list in its own output is the to-do list.
+- Write an exporter in the other direction, HIF to HAR, so fixtures can be opened
+  in browser devtools. It must report what it drops, as the importer does.
 - Improve a mismatch report's wording for one specific reason code.
 - Add a redaction rule with a justification.
 

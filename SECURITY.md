@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Report security issues privately through
-[GitHub's private vulnerability reporting](https://github.com/spool-hif/spool/security/advisories/new)
+[GitHub's private vulnerability reporting](https://github.com/totosoftsro/spool/security/advisories/new)
 for this repository. Do not open a public issue.
 
 Please include: what you found, how to reproduce it, which implementation and

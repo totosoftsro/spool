@@ -94,5 +94,5 @@ implementations.
 - `conformance/cross-check.sh` compares the two implementations against each
   other, including byte-identical rendered mismatch reports.
 
-[Unreleased]: https://github.com/spool-hif/spool/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/spool-hif/spool/releases/tag/v0.1.0
+[Unreleased]: https://github.com/totosoftsro/spool/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/totosoftsro/spool/releases/tag/v0.1.0
