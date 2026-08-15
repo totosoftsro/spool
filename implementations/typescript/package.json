@@ -51,9 +51,9 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
+    "@types/node": "^26.2.0",
     "axios": "^1.19.0",
-    "typescript": "^5.7.0",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   },
   "repository": {
