@@ -6,10 +6,10 @@
  * library built on the global `fetch`.
  *
  * It does **not** cover clients that bypass global fetch and use `http.request`
- * directly — axios on Node, node-fetch v2, got, superagent. An adapter for the
- * `http`/`https` modules would cover those, and is a well-scoped contribution;
- * see `docs/contributing-adapters.md`. Saying this plainly here is better than
- * letting someone discover it when their axios test silently hits the network.
+ * directly — axios on Node, node-fetch v2, got, superagent. Use
+ * `@spool/hif/node-http` for those. Prefer this adapter where it applies: it
+ * swaps one global with a documented shape, whereas the `node:http` adapter has
+ * to replace the module's own functions.
  */
 
 import { Player, deliverable, faultError } from '../player.js';
@@ -62,7 +62,7 @@ export function installReplay(fixture: Fixture | string, options: PlayerOptions 
   const player = new Player(parsed, options);
   const original = globalThis.fetch;
 
-  globalThis.fetch = (async (input: FetchInput, init?: RequestInit): Promise<Response> => {
+  const installed = (async (input: FetchInput, init?: RequestInit): Promise<Response> => {
     const request = await toHifRequest(input, init);
     const play = player.select(request);
     await player.delay(play);
@@ -87,9 +87,22 @@ export function installReplay(fixture: Fixture | string, options: PlayerOptions 
     });
   }) as FetchFn;
 
+  globalThis.fetch = installed;
+  let restored = false;
+
   return {
     player,
     restore(): void {
+      // See the note in the node:http adapter: idempotent, and refuses to clobber
+      // a newer interceptor, because doing so silently revives this fixture.
+      if (restored) return;
+      if (globalThis.fetch !== installed) {
+        throw new Error(
+          'spool: cannot restore globalThis.fetch because another interceptor was installed after ' +
+            'this one. Restore in reverse order of installation — the innermost handle first.',
+        );
+      }
+      restored = true;
       globalThis.fetch = original;
     },
     assertComplete(): void {

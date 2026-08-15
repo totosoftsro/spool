@@ -66,6 +66,18 @@ converted from HAR captures and copied between projects.
 
 ### Fixed
 
+- **`restore()` could leak an interceptor permanently.** Restoring handles out of
+  order reinstated the outer adapter's patch and discarded the inner one, and
+  every later install then captured the leak as its "original" — so a later test
+  kept replaying an earlier fixture and *passed against the wrong data*. Both
+  TypeScript adapters are now idempotent on restore and refuse to clobber a
+  newer interceptor, turning a silent wrong-answer failure into an explicit
+  error. The Python adapters were never affected: a transport and an HTTPAdapter
+  are per-client objects, not process-wide state.
+- **Five advisories in the development toolchain**, one critical, all in the
+  vitest/vite/esbuild chain. Resolved by moving to vitest 4; `npm audit` now
+  reports zero. The published package tree was and remains empty, so nothing
+  shipped was affected.
 - **204, 304 and 1xx responses carried a body** in Python when the fixture
   supplied one — a framing violation that a client on a keep-alive connection
   reads as the start of the next response. Node stripped it silently, so this was

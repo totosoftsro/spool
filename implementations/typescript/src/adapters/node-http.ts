@@ -289,14 +289,40 @@ export function installNodeHttpReplay(fixture: Fixture | string, options: Player
       return request as unknown as http.ClientRequest;
     } as unknown as RequestFn;
 
-  http.request = make('http', false);
-  http.get = make('http', true);
-  https.request = make('https', false);
-  https.get = make('https', true);
+  const installed = {
+    httpRequest: make('http', false),
+    httpGet: make('http', true),
+    httpsRequest: make('https', false),
+    httpsGet: make('https', true),
+  };
+
+  http.request = installed.httpRequest;
+  http.get = installed.httpGet;
+  https.request = installed.httpsRequest;
+  https.get = installed.httpsGet;
+
+  let restored = false;
 
   return {
     player,
     restore(): void {
+      // Idempotent: a second call is a no-op rather than reinstalling whatever
+      // this handle happened to capture.
+      if (restored) return;
+
+      // If something else was installed on top of us, putting our saved
+      // functions back would revive *our* patch and discard theirs. Left
+      // unchecked that is silent and severe: a later test keeps replaying an
+      // earlier fixture and passes against the wrong data. Fail loudly instead.
+      if (http.request !== installed.httpRequest) {
+        throw new Error(
+          'spool: cannot restore node:http because another interceptor was installed after this ' +
+            'one. Restore in reverse order of installation — the innermost handle first. Leaving ' +
+            'this unchecked would reinstate this adapter and silently replay the wrong fixture.',
+        );
+      }
+
+      restored = true;
       http.request = saved.httpRequest;
       http.get = saved.httpGet;
       https.request = saved.httpsRequest;

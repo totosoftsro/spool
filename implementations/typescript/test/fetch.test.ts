@@ -159,3 +159,21 @@ describe('fetch adapter', () => {
     expect(globalThis.fetch).toBe(before);
   });
 });
+
+describe('restore() safety', () => {
+  it('is idempotent and refuses to clobber a newer interceptor', () => {
+    const before = globalThis.fetch;
+
+    const handle = installReplay(fixture);
+    handle.restore();
+    handle.restore();
+    expect(globalThis.fetch).toBe(before);
+
+    const outer = installReplay(fixture);
+    const inner = installReplay(fixture);
+    expect(() => outer.restore()).toThrow(/reverse order of installation/);
+    inner.restore();
+    outer.restore();
+    expect(globalThis.fetch).toBe(before);
+  });
+});

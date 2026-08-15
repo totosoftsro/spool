@@ -217,3 +217,41 @@ describe('node:http adapter through axios', () => {
     });
   });
 });
+
+describe('restore() safety', () => {
+  // A leaked patch is the worst failure this library can have: a later test keeps
+  // replaying an earlier fixture and *passes* against the wrong data. These
+  // guard the two ways it used to happen.
+
+  it('is idempotent', () => {
+    const before = http.request;
+    const handle = installNodeHttpReplay(fixture);
+    handle.restore();
+    handle.restore();
+    expect(http.request).toBe(before);
+  });
+
+  it('restores cleanly when nested handles unwind in reverse order', () => {
+    const before = http.request;
+    const outer = installNodeHttpReplay(fixture);
+    const inner = installNodeHttpReplay(fixture);
+    inner.restore();
+    outer.restore();
+    expect(http.request).toBe(before);
+  });
+
+  it('refuses to clobber an interceptor installed after it', () => {
+    // Restoring the outer handle first used to reinstate *its* patch and discard
+    // the inner one, leaving node:http permanently patched — and every later
+    // install then captured the leaked patch as its "original".
+    const before = http.request;
+    const outer = installNodeHttpReplay(fixture);
+    const inner = installNodeHttpReplay(fixture);
+
+    expect(() => outer.restore()).toThrow(/reverse order of installation/);
+
+    inner.restore();
+    outer.restore();
+    expect(http.request).toBe(before);
+  });
+});

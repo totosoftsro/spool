@@ -74,6 +74,13 @@ Or from the CLI, `spool serve`. See [docs/serving.md](../../docs/serving.md).
 Everything in `spool.__all__` is public and follows semantic versioning.
 Adapters live under `spool.adapters` and are imported explicitly.
 
+The package ships a `py.typed` marker, so function signatures are checked in
+your project. **Fixture data itself is `Dict[str, Any]`** — the structures mirror
+the JSON document rather than being modelled as dataclasses or TypedDicts, so a
+type checker will not catch a misspelled fixture member. `spool lint` will; run
+it over your fixtures. The TypeScript package does model these as types, which is
+the one place the two APIs genuinely differ in what they can check for you.
+
 ## A note on canonical JSON
 
 RFC 8785 defines number serialization as ECMAScript `Number::toString`, which

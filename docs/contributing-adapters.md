@@ -66,6 +66,23 @@ HTTPAdapter, an undici Dispatcher. Replacing a global is a last resort — the
 `fetch` adapter does it only because `globalThis.fetch` has no seam — and when
 you do, the handle must expose `restore()`.
 
+An adapter that replaces something has three obligations, all of which exist
+because getting them wrong fails *silently*:
+
+1. **`restore()` must be idempotent.** A second call is a no-op.
+2. **`restore()` must refuse to clobber a newer interceptor.** Compare what is
+   installed now against what you installed; if they differ, throw. Blindly
+   writing back your saved reference reinstates *your* patch and discards
+   theirs — and every later install then captures the leak as its "original".
+   The visible symptom is a later test passing against an earlier fixture, which
+   is worse than a crash.
+3. **Say so in the handle's documentation:** restore in reverse order of
+   installation.
+
+The Python adapters have none of these obligations, because a Transport and an
+HTTPAdapter are per-client objects rather than process-wide state. That is the
+argument for using a seam whenever one exists.
+
 ### Faults must raise the client's own error type
 
 [§10](../specification/hif-1.0.md#10-fault-simulation) requires this, and it is
