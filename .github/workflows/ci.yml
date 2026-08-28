@@ -102,6 +102,14 @@ jobs:
         # the responses `spool serve` puts on a real socket.
         run: ./conformance/cross-check.sh
 
+      - name: Differential fuzz
+        # Attacks the seams the two checks above do not reach: awkward fixtures
+        # nobody wrote a case for, malformed input, and whether a server
+        # survives a request it cannot answer. The seed is fixed, so this is
+        # reproducible and cannot flake; a failure prints the command to repeat
+        # it exactly.
+        run: python3 conformance/fuzz.py --generated 200
+
   examples:
     name: Examples
     runs-on: ubuntu-latest

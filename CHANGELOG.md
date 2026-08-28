@@ -33,6 +33,15 @@ the implementations follow [semantic versioning](https://semver.org/).
 - `examples/serve-any-language/`, which replays a fixture using nothing but
   curl, so the "works from any language" claim is verified in CI rather than
   asserted in a README.
+- **`conformance/fuzz.py`**, a differential fuzzer that runs adversarial and
+  seeded inputs through both implementations and diffs stdout, stderr, exit codes
+  and live server responses. It runs in CI with a fixed seed, so it is
+  reproducible and cannot flake. Unlike the other checks it also notices a run
+  that hangs and a server that exits — neither of which any output comparison
+  sees. It found the port-range, 204-body and reason-phrase divergences listed
+  below, and on its first run inside the repository found two more: an unquoted
+  escape in a JSON-path error message, and a truncation ellipsis rendered `…` in
+  TypeScript and `...` in Python. Both are fixed and pinned by conformance cases.
 
 ### Security
 
@@ -104,7 +113,7 @@ converted from HAR captures and copied between projects.
   `npx @spool/hif`, and the CLI reference explains why it matters.
 - The README and getting-started guide now state plainly that the packages are
   not published yet, and give a from-source path that works today.
-- `conformance/cross-check.sh` grew from 22 comparisons to 65, and now covers
+- `conformance/cross-check.sh` grew from 22 comparisons to 67, and now covers
   lint warnings, HAR conversion and real HTTP responses in addition to mismatch
   reports and digests.
 
@@ -144,13 +153,15 @@ implementations.
 
 ### Conformance
 
-- 189 language-neutral cases covering normalization, canonical JSON, digests,
+- 207 language-neutral cases covering normalization, canonical JSON, digests,
   matching, selection, explanation, redaction, structural errors and version
   handling. Both implementations pass all of them.
 - `conformance/verify-vectors.sh` re-derives every digest and base64 vector with
   `openssl`, so no expected value originates from the code under test.
 - `conformance/cross-check.sh` compares the two implementations against each
   other, including byte-identical rendered mismatch reports.
+- `conformance/fuzz.py` searches for divergences the cases do not cover, and runs
+  in CI with a fixed seed.
 
 Nothing has been tagged or published yet, so there are no release links here.
 The release workflows tag each implementation separately — `typescript-v0.1.0`

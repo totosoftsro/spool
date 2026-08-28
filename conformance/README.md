@@ -79,6 +79,41 @@ The general rule: **where a value could be produced by the code under test, it
 was produced by something else instead.** `conformance/verify-vectors.sh`
 re-derives the digest and base64 vectors using `openssl` and fails if they drift.
 
+## The differential fuzzer
+
+`cross-check.sh` compares a fixed set of outputs. [`fuzz.py`](./fuzz.py) attacks
+the seams it does not reach: fixtures nobody thought to write a case for,
+malformed input, protocol edge cases, and whether a server survives a request it
+cannot answer.
+
+```bash
+python3 conformance/fuzz.py                 # hand-written corpus, quick
+python3 conformance/fuzz.py --generated 200 # plus 200 seeded fixtures
+python3 conformance/fuzz.py --seed 12345    # reproduce a specific run
+python3 conformance/fuzz.py --skip-servers  # opens no sockets
+```
+
+**It is deterministic.** The seed is fixed unless you pass one, so CI cannot
+flake and a failure is always reproducible with the command it prints. Generated
+fixtures are assembled from values that have historically been where the
+implementations disagree — control characters, boundary ports, unregistered
+statuses, oversized headers — rather than from random bytes, which almost never
+reach an interesting branch.
+
+It also notices two things no output comparison can: a run that **hangs** (how
+catastrophic regex backtracking presents) and a server that **exits** during the
+run.
+
+Findings so far, each now pinned by a conformance case: a port above 65535
+loading in one implementation and failing in the other; a 204 carrying a body in
+one and not the other; a differing reason phrase for an unregistered status; an
+unquoted escape in a JSON-path error; a truncation ellipsis rendered `…` in one
+and `...` in the other; and a fixture that terminated the whole `spool serve`
+process.
+
+When it finds something, fix the divergence **and add a conformance case**, so
+the suite catches it next time rather than the fuzzer.
+
 ## Known intentional divergences
 
 The project's rule is that any difference between implementations is a bug. There

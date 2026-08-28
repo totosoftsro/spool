@@ -17,8 +17,8 @@ Writing the format down first has three concrete effects:
    `%2F` decoded before comparing paths? Every existing tool answered these, but
    none of them wrote the answer down, so no two agree.
 2. **It makes a second implementation cheap and a third plausible.** The Python
-   port was written from the document, and passed all 189 conformance cases on
-   the first run — which is evidence about the document, not about the code.
+   port was written from the document, and passed the entire conformance suite
+   on the first run — which is evidence about the document, not about the code.
 3. **It outlives the code.** Implementations get abandoned. A specification with
    a conformance suite can be picked up again.
 

@@ -181,7 +181,7 @@ def _short(value: Any, max_len: int) -> str:
         return _ABSENT
     text = value if isinstance(value, str) else json.dumps(value)
     if len(text) > max_len:
-        return text[:max_len] + f"... ({len(text)} chars)"
+        return text[:max_len] + f"… ({len(text)} chars)"
     return text
 
 

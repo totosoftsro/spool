@@ -1,0 +1,33 @@
+{
+  "id": "structural/json-path-unknown-escape",
+  "kind": "structural",
+  "level": "core",
+  "description": "Only ~0, ~1 and ~2 are defined escapes in a JSON path (spec section 7.7). Any other ~ sequence is a structural error rather than a literal, so a typo cannot silently become a path that matches nothing.",
+  "document": {
+    "hif": "1.0",
+    "interactions": [
+      {
+        "request": {
+          "method": "GET",
+          "url": "https://x.test/a"
+        },
+        "response": {
+          "status": 200
+        },
+        "match": {
+          "body": {
+            "json": {
+              "ignore": [
+                "/a~9b"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expected": {
+    "error": true,
+    "errorContains": "Invalid escape \"~9\""
+  }
+}

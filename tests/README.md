@@ -34,3 +34,6 @@ directly in development as well as in CI:
 - [`../conformance/cross-check.sh`](../conformance/cross-check.sh) — compares the
   two implementations against each other, including byte-identical rendered
   mismatch reports and matching CLI command surfaces.
+- [`../conformance/fuzz.py`](../conformance/fuzz.py) — differential fuzzer over
+  adversarial and seeded inputs, including the servers. Deterministic, so it runs
+  in CI without flaking.

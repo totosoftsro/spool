@@ -1231,6 +1231,18 @@
       "kind": "regex",
       "level": "core",
       "file": "cases/match/regex-group-without-quantifier.json"
+    },
+    {
+      "id": "structural/json-path-unknown-escape",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/json-path-unknown-escape.json"
+    },
+    {
+      "id": "structural/json-path-defined-escapes",
+      "kind": "structural",
+      "level": "core",
+      "file": "cases/structural/json-path-defined-escapes.json"
     }
   ]
 }

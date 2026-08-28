@@ -504,4 +504,4 @@ def _describe(body: Dict[str, Any]) -> str:
 
 def _preview(data: bytes) -> str:
     text = data[:256].decode("utf-8", errors="replace")
-    return text + (f"... ({len(data)} bytes total)" if len(data) > 256 else "")
+    return text + (f"… ({len(data)} bytes total)" if len(data) > 256 else "")

@@ -18,9 +18,14 @@ cd implementations/python && pip install -e '.[dev]' && pytest && cd ../..
 # Both implementations against each other
 (cd implementations/typescript && npm run build)
 ./conformance/cross-check.sh
+python3 conformance/fuzz.py
 ```
 
-If all three pass, you have a working development environment.
+If all four pass, you have a working development environment.
+
+`fuzz.py` is the one worth running before you open a pull request that touches
+matching, rendering or the servers — it compares the two implementations on
+inputs no case file covers, and it is where most recent divergences were found.
 
 ## What this project most needs
 

@@ -54,7 +54,7 @@ def _unescape_token(token: str, path: str) -> str:
             out.append("*")
         else:
             raise HifStructuralError(
-                f"Invalid escape ~{nxt} in JSON path {q(path)}; only ~0, ~1 and ~2 are defined"
+                f'Invalid escape "~{nxt}" in JSON path {q(path)}; only ~0, ~1 and ~2 are defined'
             )
         i += 2
     return "".join(out)
