@@ -1,4 +1,11 @@
 {
+  // The base config type-checks everything, sources and tests together, so it
+  // cannot set `rootDir`: that would require every included file to live under
+  // src/, and the tests do not. `rootDir` is an emit concern, and this is the
+  // only config that emits.
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src"
+  },
   "include": ["src/**/*.ts"]
 }

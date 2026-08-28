@@ -318,7 +318,7 @@ async function rawRequest(port: number, payload: string): Promise<string> {
     const socket = new Socket();
     const chunks: Buffer[] = [];
     socket.connect(port, '127.0.0.1', () => socket.write(payload));
-    socket.on('data', (chunk) => chunks.push(chunk));
+    socket.on('data', (chunk: Buffer) => chunks.push(chunk));
     socket.on('close', () => resolve(Buffer.concat(chunks).toString('utf8')));
     socket.on('error', reject);
     setTimeout(() => socket.destroy(), 3000);

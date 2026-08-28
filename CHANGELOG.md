@@ -75,6 +75,14 @@ converted from HAR captures and copied between projects.
 
 ### Fixed
 
+- **`npm run typecheck` had never passed, so the TypeScript CI jobs were red on
+  every push.** The base `tsconfig.json` type-checks `src/` and `test/` together
+  but also set `rootDir: "src"`, which requires every included file to live under
+  `src/` — seven test files do not. `rootDir` is an emit setting and now lives in
+  `tsconfig.build.json`, the only config that emits; the built output is
+  byte-for-byte identical. This was missed locally because the build config was
+  what got run by hand, and the build config was never the broken one.
+
 - **`restore()` could leak an interceptor permanently.** Restoring handles out of
   order reinstated the outer adapter's patch and discarded the inner one, and
   every later install then captured the leak as its "original" — so a later test
