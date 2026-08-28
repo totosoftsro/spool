@@ -108,6 +108,11 @@ jobs:
         # survives a request it cannot answer. The seed is fixed, so this is
         # reproducible and cannot flake; a failure prints the command to repeat
         # it exactly.
+        #
+        # Bounded, because one of the failures this step exists to catch is a
+        # hang: fuzz.py times out each subprocess itself, but a stuck server
+        # should not be able to hold the runner for the job's default limit.
+        timeout-minutes: 15
         run: python3 conformance/fuzz.py --generated 200
 
   examples:
