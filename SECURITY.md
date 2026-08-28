@@ -94,6 +94,32 @@ Both implementations distinguish structural errors from match failures
 ([§11.3](./specification/hif-1.0.md#113-errors)), so a malformed fixture fails
 loudly at load time rather than degrading into confusing behaviour later.
 
+## Supply chain
+
+Every GitHub Action used by this repository is pinned to a full commit SHA, with
+the version it corresponds to in a trailing comment:
+
+```yaml
+- uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+```
+
+A tag is a moving pointer. Whoever controls the action's repository can move `v7`
+to a different commit at any time, and every workflow that references it then
+runs code nobody reviewed — including the release workflows, which hold
+publishing credentials. A SHA cannot be moved.
+
+Dependabot understands this form and proposes SHA updates monthly, rewriting the
+comment along with the SHA. To change a pin by hand, resolve the tag yourself
+rather than copying a SHA from anywhere else:
+
+```bash
+gh api repos/actions/checkout/git/ref/tags/v7 --jq .object.sha
+```
+
+This protects against a compromised action. It does not protect against an action
+that was malicious in the version you pinned, so the comment matters: it is what
+makes a pin reviewable.
+
 ## Supported versions
 
 Until 1.0, security fixes land on the latest minor release of each

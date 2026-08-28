@@ -104,6 +104,18 @@ converted from HAR captures and copied between projects.
 
 ### Changed
 
+- **Every GitHub Action is pinned to a commit SHA** rather than a version tag,
+  with the version kept in a trailing comment. A tag can be repointed by whoever
+  controls the action's repository; the release workflows hold publishing
+  credentials, so that is a real exposure and not a theoretical one. Explained in
+  [SECURITY.md](./SECURITY.md#supply-chain).
+- **`actions/checkout` 4 → 7, `actions/setup-node` 4 → 7, `actions/setup-python`
+  5 → 7**, and the TypeScript development toolchain to `typescript` 7 and
+  `@types/node` 26. The type checker, the build and all 361 tests pass unchanged
+  on TypeScript 7; no source edit was needed. The published package contains no
+  dependencies, so none of this reaches a consumer.
+
+
 - **Both packages now ship the Apache-2.0 licence text.** Neither did, which for
   an Apache-2.0 project is a distribution-terms problem, not a tidiness one.
 - **The Python package ships a `py.typed` marker.** It advertised
